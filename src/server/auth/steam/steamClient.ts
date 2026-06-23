@@ -1,8 +1,15 @@
 import type { Logger } from '../../logger.js';
+import { FatalAuthError } from '../errors.js';
 
 const DBD_APP_ID = 381210;
 const DBD_CONTENT_DEPOT = 381211; // "Dead by Daylight Content" (Windows)
 const VERSION_FILE = 'DeadByDaylight/Content/Version/DeadByDaylightVersionNumber.txt';
+
+// EResults that mean the credentials/2FA are wrong (unrecoverable by retrying):
+// InvalidPassword, AccountLogonDenied, AccountLoginDeniedNeedTwoFactor,
+// TwoFactorCodeMismatch. Anything else (rate limit, service unavailable, network)
+// is treated as transient and backed off.
+const FATAL_LOGIN_ERESULTS = new Set([5, 63, 85, 88]);
 
 export interface SteamCredentials {
   username: string;
@@ -109,14 +116,18 @@ export class SteamClient {
       user.on('steamGuard', (_domain: string | null, callback: (code: string) => void) => {
         const code = this.twoFactorCode();
         if (!code) {
-          settle(new Error('Steam Guard required but STEAM_SHARED_SECRET is not set'));
+          settle(new FatalAuthError('Steam Guard required but STEAM_SHARED_SECRET is not set'));
           return;
         }
         callback(code);
       });
       user.on('error', (err: Error & { eresult?: number }) => {
         this.log.error({ eresult: err.eresult, err }, 'Steam error');
-        settle(err);
+        if (err.eresult !== undefined && FATAL_LOGIN_ERESULTS.has(err.eresult)) {
+          settle(new FatalAuthError(`Steam login failed: ${err.message} (eresult ${err.eresult})`));
+        } else {
+          settle(err);
+        }
       });
       user.on('disconnected', (eresult: number, msg: string) => {
         this.log.debug({ eresult, msg }, 'Steam disconnected');
@@ -169,6 +180,14 @@ export class SteamClient {
 
       const { file } = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
       return Buffer.from(file).toString('utf8').trim();
+    } catch (err) {
+      if ((err as { eresult?: number }).eresult === 15) {
+        throw new FatalAuthError(
+          'Could not read the Dead by Daylight depot (AccessDenied). This Steam account ' +
+            'must own Dead by Daylight (app 381210); Family Sharing does not grant depot access.',
+        );
+      }
+      throw err;
     } finally {
       this.busy = false;
     }

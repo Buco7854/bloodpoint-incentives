@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { ALL_REGION_IDS } from '../shared/regions.js';
+import { isFatalError } from './auth/errors.js';
 import { createAuth } from './auth/factory.js';
 import { BhvrClient } from './bhvr/client.js';
 import { RateGate } from './bhvr/rateGate.js';
@@ -46,7 +47,12 @@ async function main(): Promise<void> {
   } catch (err) {
     if (err instanceof VersionFormatError) {
       log.fatal({ err }, 'invalid DBD_GAME_VERSION');
-      throw err;
+      process.exit(1);
+    }
+    if (isFatalError(err)) {
+      log.fatal({ err }, 'unrecoverable error during startup; exiting');
+      await provider.shutdown();
+      process.exit(1);
     }
     log.error({ err }, 'version resolution failed at startup; poller will keep retrying');
   }
@@ -67,6 +73,23 @@ async function main(): Promise<void> {
     log.child({ component: 'bhvr' }),
   );
 
+  let shuttingDown = false;
+  let pollerRef: Poller | undefined;
+  let appRef: Awaited<ReturnType<typeof buildServer>> | undefined;
+  const shutdown = async (reason: string, code = 0): Promise<void> => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    log.info({ reason, code }, 'shutting down');
+    try {
+      await appRef?.close();
+      await pollerRef?.stop();
+      await provider.shutdown();
+    } catch (err) {
+      log.error({ err }, 'error during shutdown');
+    }
+    process.exit(code);
+  };
+
   const poller = new Poller(
     cache,
     client,
@@ -75,31 +98,20 @@ async function main(): Promise<void> {
       regionIds,
       pollIntervalMs: config.pollIntervalSeconds * 1000,
       versionRefreshMs: config.versionRefreshHours * 3_600_000,
+      onFatal: () => void shutdown('fatal-error', 1),
     },
     log.child({ component: 'poller' }),
   );
+  pollerRef = poller;
 
   const publicDir = path.join(__dirname, '../public');
   const app = await buildServer({ config, cache, publicDir, log: log.child({ component: 'http' }) });
+  appRef = app;
 
   poller.start();
   await app.listen({ host: '0.0.0.0', port: config.port });
   log.info({ port: config.port }, 'http server listening');
 
-  let shuttingDown = false;
-  const shutdown = async (signal: string): Promise<void> => {
-    if (shuttingDown) return;
-    shuttingDown = true;
-    log.info({ signal }, 'shutting down');
-    try {
-      await app.close();
-      await poller.stop();
-      await provider.shutdown();
-    } catch (err) {
-      log.error({ err }, 'error during shutdown');
-    }
-    process.exit(0);
-  };
   process.on('SIGTERM', () => void shutdown('SIGTERM'));
   process.on('SIGINT', () => void shutdown('SIGINT'));
 }

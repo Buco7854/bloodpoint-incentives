@@ -1,6 +1,6 @@
 import type { Logger } from '../logger.js';
 import { delay, jitter } from '../util/async.js';
-import { AuthError, NotImplementedError } from '../auth/errors.js';
+import { AuthError, isFatalError } from '../auth/errors.js';
 import {
   BhvrRateLimitedError,
   BhvrServerError,
@@ -19,6 +19,8 @@ export interface PollerOptions {
   regionIds: readonly string[];
   pollIntervalMs: number;
   versionRefreshMs: number;
+  /** Called once when an unrecoverable error occurs, so the app can shut down. */
+  onFatal?: (err: unknown) => void;
 }
 
 /**
@@ -34,6 +36,7 @@ export class Poller {
   private backoff = 1;
   private consecutiveBadPasses = 0;
   private lastVersionRefresh = Date.now();
+  private fatalHandled = false;
 
   constructor(
     private readonly cache: IncentiveCache,
@@ -70,6 +73,10 @@ export class Poller {
       try {
         await this.tick();
       } catch (err) {
+        if (isFatalError(err)) {
+          this.triggerFatal(err);
+          return;
+        }
         this.log.error({ err }, 'unexpected poller error');
         await delay(HARD_PAUSE_MS, this.signal);
       }
@@ -95,6 +102,7 @@ export class Poller {
 
     const region = this.options.regionIds[this.index];
     if (region) await this.queryRegion(region, version);
+    if (this.signal.aborted) return; // fatal error or shutdown happened mid-tick
 
     this.index = (this.index + 1) % this.options.regionIds.length;
     if (this.index === 0) await this.finishPass();
@@ -120,11 +128,25 @@ export class Poller {
     }
   }
 
+  private triggerFatal(err: unknown): void {
+    if (this.fatalHandled) return;
+    this.fatalHandled = true;
+    const message = err instanceof Error ? err.message : String(err);
+    this.cache.setStatus('error', message);
+    this.log.fatal({ err }, 'unrecoverable error; stopping the poller');
+    this.controller.abort();
+    this.options.onFatal?.(err);
+  }
+
   private handleError(region: string, err: unknown): void {
-    if (err instanceof AuthError || err instanceof NotImplementedError) {
-      this.cache.setStatus('error', err.message);
-      this.log.error({ region, err }, 'authentication failed; pausing');
-      this.backoff = MAX_BACKOFF;
+    if (isFatalError(err)) {
+      this.triggerFatal(err);
+      return;
+    }
+    if (err instanceof AuthError) {
+      this.backoff = Math.min(this.backoff * 2, MAX_BACKOFF);
+      this.cache.setStatus('degraded', err.message);
+      this.log.warn({ region, err }, 'auth error from BHVR; backing off');
       return;
     }
     if (err instanceof BhvrRateLimitedError) {

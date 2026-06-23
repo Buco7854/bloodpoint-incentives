@@ -109,6 +109,12 @@ Pluggable `AuthProvider` interface with auto-refresh on `401`:
 > `KRAKEN_DBD` identity from Node alone. The closest primitive
 > (`createAuthSessionTicket`) is used; quick mode is the validated path meanwhile.
 
+On an **unrecoverable** error (bad Steam credentials, a rejected non-refreshable
+quick-mode key, or the Epic stub) the process logs a fatal error and exits with a
+non-zero code, rather than sitting idle while still reporting healthy. With a
+restart policy the container keeps restarting until the configuration is fixed.
+Transient errors (network, rate limits, 5xx, fallbacks) just back off and retry.
+
 ### 2. Site access (so it can sit behind Authentik)
 
 Set `ACCESS_API_KEY` and every route **except `/healthz`** requires it, via the

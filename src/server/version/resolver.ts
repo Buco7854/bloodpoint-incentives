@@ -1,4 +1,5 @@
 import type { Logger } from '../logger.js';
+import { isFatalError } from '../auth/errors.js';
 import type { VersionDiscovery } from '../auth/types.js';
 import { deriveVersionArtifacts, type VersionArtifacts } from './category.js';
 import { StateStore } from './store.js';
@@ -72,6 +73,7 @@ export class VersionResolver {
     try {
       versionString = await this.opts.discovery.resolveLatestVersion();
     } catch (err) {
+      if (isFatalError(err)) throw err;
       this.opts.log.warn({ err }, 'version discovery failed; keeping current version');
       return;
     }

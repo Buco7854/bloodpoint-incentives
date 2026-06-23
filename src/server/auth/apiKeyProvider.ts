@@ -1,5 +1,5 @@
 import type { AuthProvider, VersionDiscovery } from './types.js';
-import { AuthError } from './errors.js';
+import { FatalAuthError } from './errors.js';
 
 /**
  * Quick mode: use a pre-obtained `DBD_API_KEY` directly. There's no session to
@@ -17,7 +17,7 @@ export class ApiKeyProvider implements AuthProvider {
   }
 
   async refresh(): Promise<string> {
-    throw new AuthError(
+    throw new FatalAuthError(
       'DBD_API_KEY was rejected (401) and cannot be refreshed in quick mode. ' +
         'Update DBD_API_KEY, or run full Steam mode (STEAM_USERNAME/PASSWORD) ' +
         'for automatic, unattended re-authentication.',
