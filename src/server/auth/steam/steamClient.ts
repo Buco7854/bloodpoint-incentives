@@ -10,26 +10,45 @@ export interface SteamCredentials {
   sharedSecret: string | null;
 }
 
+export interface SteamClientOptions {
+  /** Lower bound for the randomized session-refresh interval (hours). */
+  reconnectMinHours?: number;
+  /** Upper bound for the randomized session-refresh interval (hours). */
+  reconnectMaxHours?: number;
+}
+
 /**
- * Thin wrapper over node-steam-user. Keeps one long-lived logged-in session and
- * exposes only what we need: a web auth ticket and the depot version file.
+ * Thin wrapper over node-steam-user. Exposes only what we need: a web auth ticket
+ * and the depot version file.
  *
- * Note: steam-user v5 has no GetAuthTicketForWebApi(identity), so we cannot bind
- * the ticket to the "KRAKEN_DBD" identity from here. We use createAuthSessionTicket
- * as the closest available primitive; full Steam login against BHVR may therefore
- * require a future library/native primitive. Quick mode (DBD_API_KEY) is the
- * supported path meanwhile.
+ * A normal client does not stay connected forever, so the session is cycled on a
+ * randomized 4-6h timer (log off, then reconnect lazily on next use), reusing a
+ * captured refresh token so reconnects do not re-trigger Steam Guard.
+ *
+ * Note: steam-user v5 has no GetAuthTicketForWebApi(identity), so the ticket
+ * cannot be bound to the "KRAKEN_DBD" identity here. createAuthSessionTicket is
+ * used as the closest primitive; quick mode (DBD_API_KEY) is the supported path.
  */
 export class SteamClient {
   private user: any = null;
   private SteamUser: any = null;
   private SteamTotp: any = null;
   private connectPromise: Promise<void> | null = null;
+  private refreshToken: string | null = null;
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private busy = false;
+  private stopped = false;
+  private readonly reconnectMinHours: number;
+  private readonly reconnectMaxHours: number;
 
   constructor(
     private readonly creds: SteamCredentials,
     private readonly log: Logger,
-  ) {}
+    options: SteamClientOptions = {},
+  ) {
+    this.reconnectMinHours = options.reconnectMinHours ?? 4;
+    this.reconnectMaxHours = options.reconnectMaxHours ?? 6;
+  }
 
   private async loadModules(): Promise<void> {
     if (!this.SteamUser) {
@@ -67,6 +86,9 @@ export class SteamClient {
         else resolve();
       };
 
+      user.on('refreshToken', (token: string) => {
+        this.refreshToken = token;
+      });
       user.on('loggedOn', () => {
         try {
           user.setPersona(SteamUser.EPersonaState.Online);
@@ -74,6 +96,7 @@ export class SteamClient {
           /* non-fatal */
         }
         this.log.info('logged into Steam');
+        this.scheduleSessionRefresh();
         settle();
       });
       user.on('steamGuard', (_domain: string | null, callback: (code: string) => void) => {
@@ -89,51 +112,99 @@ export class SteamClient {
         settle(err);
       });
       user.on('disconnected', (eresult: number, msg: string) => {
-        this.log.warn({ eresult, msg }, 'Steam disconnected (auto-relogin will recover)');
+        this.log.debug({ eresult, msg }, 'Steam disconnected');
       });
 
-      user.logOn({
-        accountName: this.creds.username,
-        password: this.creds.password,
-        twoFactorCode: this.twoFactorCode(),
-      });
+      // Prefer the refresh token (no Steam Guard) once we have captured one.
+      if (this.refreshToken) {
+        user.logOn({ refreshToken: this.refreshToken });
+      } else {
+        user.logOn({
+          accountName: this.creds.username,
+          password: this.creds.password,
+          twoFactorCode: this.twoFactorCode(),
+        });
+      }
     });
   }
 
   /** Hex-encoded auth session ticket for app 381210. */
   async getWebTicketHex(): Promise<string> {
-    await this.connect();
-    const { sessionTicket } = await this.user.createAuthSessionTicket(DBD_APP_ID);
-    return Buffer.from(sessionTicket).toString('hex');
+    this.busy = true;
+    try {
+      await this.connect();
+      const { sessionTicket } = await this.user.createAuthSessionTicket(DBD_APP_ID);
+      return Buffer.from(sessionTicket).toString('hex');
+    } finally {
+      this.busy = false;
+    }
   }
 
   /** Reads the latest public-branch client version string from the content depot. */
   async readVersionString(): Promise<string> {
-    await this.connect();
-    const { apps } = await this.user.getProductInfo([DBD_APP_ID], [], true);
-    const depot = apps?.[DBD_APP_ID]?.appinfo?.depots?.[DBD_CONTENT_DEPOT];
-    const pub = depot?.manifests?.public;
-    const manifestGid: string | undefined = typeof pub === 'string' ? pub : pub?.gid;
-    if (!manifestGid) {
-      throw new Error(`could not find public manifest for depot ${DBD_CONTENT_DEPOT}`);
+    this.busy = true;
+    try {
+      await this.connect();
+      const { apps } = await this.user.getProductInfo([DBD_APP_ID], [], true);
+      const depot = apps?.[DBD_APP_ID]?.appinfo?.depots?.[DBD_CONTENT_DEPOT];
+      const pub = depot?.manifests?.public;
+      const manifestGid: string | undefined = typeof pub === 'string' ? pub : pub?.gid;
+      if (!manifestGid) {
+        throw new Error(`could not find public manifest for depot ${DBD_CONTENT_DEPOT}`);
+      }
+
+      const manifest = await this.user.getManifest(DBD_APP_ID, DBD_CONTENT_DEPOT, manifestGid, 'public');
+      const target = VERSION_FILE.replace(/\//g, '\\').toLowerCase();
+      const entry = (manifest.files as Array<{ filename?: string }>).find(
+        (f) => typeof f.filename === 'string' && f.filename.toLowerCase() === target,
+      );
+      if (!entry) throw new Error('version file not found in depot manifest');
+
+      const { file } = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
+      return Buffer.from(file).toString('utf8').trim();
+    } finally {
+      this.busy = false;
     }
-
-    const manifest = await this.user.getManifest(DBD_APP_ID, DBD_CONTENT_DEPOT, manifestGid, 'public');
-    const target = VERSION_FILE.replace(/\//g, '\\').toLowerCase();
-    const entry = (manifest.files as Array<{ filename?: string }>).find(
-      (f) => typeof f.filename === 'string' && f.filename.toLowerCase() === target,
-    );
-    if (!entry) throw new Error('version file not found in depot manifest');
-
-    const { file } = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
-    return Buffer.from(file).toString('utf8').trim();
   }
 
-  async shutdown(): Promise<void> {
+  private scheduleSessionRefresh(): void {
+    if (this.stopped) return;
+    if (this.refreshTimer) clearTimeout(this.refreshTimer);
+    const span = this.reconnectMaxHours - this.reconnectMinHours;
+    const hours = this.reconnectMinHours + Math.random() * span;
+    this.refreshTimer = setTimeout(() => void this.refreshSession(), hours * 3_600_000);
+    this.log.info({ inHours: Number(hours.toFixed(2)) }, 'scheduled Steam session refresh');
+  }
+
+  private async refreshSession(): Promise<void> {
+    if (this.stopped) return;
+    if (this.busy) {
+      // Don't interrupt an in-flight operation; try again shortly.
+      this.refreshTimer = setTimeout(() => void this.refreshSession(), 30_000);
+      return;
+    }
+    this.log.info('cycling Steam session');
+    this.teardown();
+    this.scheduleSessionRefresh();
+    // Reconnect lazily the next time a ticket or depot read is needed.
+  }
+
+  private teardown(): void {
     try {
       this.user?.logOff();
     } catch {
       /* ignore */
     }
+    this.user = null;
+    this.connectPromise = null;
+  }
+
+  async shutdown(): Promise<void> {
+    this.stopped = true;
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+    this.teardown();
   }
 }
