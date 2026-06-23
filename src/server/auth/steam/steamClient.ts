@@ -171,15 +171,33 @@ export class SteamClient {
         throw new Error(`could not find public manifest for depot ${DBD_CONTENT_DEPOT}`);
       }
 
-      const manifest = await this.user.getManifest(DBD_APP_ID, DBD_CONTENT_DEPOT, manifestGid, 'public');
-      const target = VERSION_FILE.replace(/\//g, '\\').toLowerCase();
-      const entry = (manifest.files as Array<{ filename?: string }>).find(
-        (f) => typeof f.filename === 'string' && f.filename.toLowerCase() === target,
+      const manifestResult = await this.user.getManifest(
+        DBD_APP_ID,
+        DBD_CONTENT_DEPOT,
+        manifestGid,
+        'public',
+      );
+      // The promisified API may resolve to the manifest directly or wrap it as
+      // { manifest }, depending on the steam-user version.
+      const manifest = (manifestResult?.files ? manifestResult : manifestResult?.manifest) as
+        | { files?: Array<{ filename?: string }> }
+        | undefined;
+      const files = manifest?.files;
+      if (!files) throw new Error('depot manifest contained no file list');
+
+      // Match by basename so path prefixes and separators do not matter.
+      const wantedBase = VERSION_FILE.split('/').pop()?.toLowerCase();
+      const entry = files.find(
+        (f) =>
+          typeof f.filename === 'string' &&
+          f.filename.split(/[\\/]/).pop()?.toLowerCase() === wantedBase,
       );
       if (!entry) throw new Error('version file not found in depot manifest');
 
-      const { file } = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
-      return Buffer.from(file).toString('utf8').trim();
+      const downloadResult = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
+      const fileBuffer = (downloadResult?.file ?? downloadResult) as Buffer | undefined;
+      if (!fileBuffer) throw new Error('depot file download returned no data');
+      return Buffer.from(fileBuffer).toString('utf8').trim();
     } catch (err) {
       if ((err as { eresult?: number }).eresult === 15) {
         throw new FatalAuthError(
