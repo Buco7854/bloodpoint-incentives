@@ -96,9 +96,11 @@ Pluggable `AuthProvider` interface with auto-refresh on `401`:
   discovery, so `DBD_GAME_VERSION` is required.
 - **Full Steam mode** (`STEAM_USERNAME` / `STEAM_PASSWORD` / `STEAM_SHARED_SECRET`):
   headless login via `steam-user`, exchange for a DBD api-key, re-login on `401`,
-  and discover the latest build from the depot. The Steam session is cycled on a
-  randomized 4-6h timer (a normal client does not stay connected forever),
-  reusing a captured refresh token so reconnects do not re-prompt Steam Guard.
+  and discover the latest build from the depot. On a randomized 4-6h timer the
+  whole session is cycled like a game relaunch: the Steam connection AND the DBD
+  api-key are dropped and re-established lazily on the next poll (a normal client
+  does not stay connected forever). A captured refresh token keeps the Steam
+  reconnect from re-prompting Steam Guard.
 - **Epic** (`AUTH_PROVIDER=epic`): a wired `NotImplemented` stub, designed so
   adding it later is an isolated change.
 

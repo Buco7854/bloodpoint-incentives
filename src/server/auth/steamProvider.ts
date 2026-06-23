@@ -28,6 +28,12 @@ export class SteamAuthProvider implements AuthProvider {
 
   constructor(private readonly deps: SteamAuthProviderDeps) {
     this.versionDiscovery = deps.discovery;
+    // When the Steam session cycles (every 4-6h), drop the DBD api-key too so the
+    // next poll re-logs into both, like a player relaunching the game.
+    deps.steamClient.setOnSessionCycle(() => {
+      this.apiKey = null;
+      deps.log.info('invalidated DBD api-key alongside the Steam session cycle');
+    });
   }
 
   async getApiKey(): Promise<string> {

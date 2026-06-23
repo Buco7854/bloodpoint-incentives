@@ -36,6 +36,7 @@ export class SteamClient {
   private connectPromise: Promise<void> | null = null;
   private refreshToken: string | null = null;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private onCycle: (() => void) | null = null;
   private busy = false;
   private stopped = false;
   private readonly reconnectMinHours: number;
@@ -48,6 +49,12 @@ export class SteamClient {
   ) {
     this.reconnectMinHours = options.reconnectMinHours ?? 4;
     this.reconnectMaxHours = options.reconnectMaxHours ?? 6;
+  }
+
+  /** Notified whenever the session is cycled, so callers can drop derived state
+   * (e.g. the DBD api-key) and re-establish it like a fresh game launch. */
+  setOnSessionCycle(callback: () => void): void {
+    this.onCycle = callback;
   }
 
   private async loadModules(): Promise<void> {
@@ -186,7 +193,9 @@ export class SteamClient {
     this.log.info('cycling Steam session');
     this.teardown();
     this.scheduleSessionRefresh();
-    // Reconnect lazily the next time a ticket or depot read is needed.
+    // Drop the Steam connection and any derived DBD session; both re-establish
+    // lazily on the next ticket/depot read, like restarting the game.
+    this.onCycle?.();
   }
 
   private teardown(): void {
