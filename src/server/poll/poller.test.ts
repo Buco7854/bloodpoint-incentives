@@ -12,7 +12,7 @@ const version = { version: 'v', category: 'c', userAgent: 'ua', buildId: 1 };
 
 const makeCache = (): IncentiveCache =>
   new IncentiveCache(
-    { platform: 'Windows', provider: 'steam', forcedRegion: 'eu-central-1', refreshSeconds: 60, pageSize: 12 },
+    { platform: 'Windows', provider: 'steam', forcedRegion: 'eu-central-1', contactEmail: null, refreshSeconds: 60, pageSize: 12 },
     ['eu-central-1'],
   );
 

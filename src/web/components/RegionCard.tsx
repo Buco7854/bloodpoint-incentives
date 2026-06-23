@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { relativeTime } from '@shared/format';
 import { headlineRole } from '@shared/incentive';
 import type { RegionIncentive } from '@shared/types';
+import { useI18n } from '../i18n';
+import { formatUpdated } from '../i18n/time';
 import { type BonusTier, bonusTier } from '../lib/bonus';
 import { CARD_GRADIENT } from '../lib/regionTheme';
 import { Badge } from './Badge';
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export function RegionCard({ region, now }: Props) {
+  const { t } = useI18n();
   const activeRole = headlineRole(region.survivor, region.killer);
   const themeKey = activeRole ?? 'none';
   const tier = bonusTier(Math.max(region.survivor, region.killer));
@@ -39,8 +41,8 @@ export function RegionCard({ region, now }: Props) {
     >
       <header className="flex items-start justify-between gap-3">
         <RegionLabel region={region} />
-        {region.stale && !neverReal && <Badge tone="amber">Stale</Badge>}
-        {neverReal && <Badge tone="neutral">No data</Badge>}
+        {region.stale && !neverReal && <Badge tone="amber">{t('badgeStale')}</Badge>}
+        {neverReal && <Badge tone="neutral">{t('badgeNoData')}</Badge>}
       </header>
 
       <BonusHeadline region={region} size="card" />
@@ -53,7 +55,7 @@ export function RegionCard({ region, now }: Props) {
       {region.isReal && <BalanceBar ratio={region.ratio} />}
 
       <footer className="mt-auto pt-1 text-[11px] text-bone-500">
-        updated {relativeTime(region.lastUpdated, now)}
+        {formatUpdated(region.lastUpdated, now, t)}
       </footer>
     </article>
   );

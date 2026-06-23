@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useI18n } from '../i18n';
 
 interface Props {
   page: number;
@@ -8,6 +9,7 @@ interface Props {
 
 /** Windowed numeric pagination. Renders nothing for a single page. */
 export function Pagination({ page, pageCount, onPage }: Props) {
+  const { t } = useI18n();
   if (pageCount <= 1) return null;
 
   const window = 1;
@@ -27,7 +29,7 @@ export function Pagination({ page, pageCount, onPage }: Props) {
         onClick={() => onPage(page - 1)}
         disabled={page === 0}
       >
-        Prev
+        {t('paginationPrev')}
       </button>
       {pages.map((p, i) => {
         const gap = i > 0 && p - (pages[i - 1] ?? p) > 1;
@@ -56,7 +58,7 @@ export function Pagination({ page, pageCount, onPage }: Props) {
         onClick={() => onPage(page + 1)}
         disabled={page === pageCount - 1}
       >
-        Next
+        {t('paginationNext')}
       </button>
     </nav>
   );

@@ -1,7 +1,9 @@
 import clsx from 'clsx';
-import { formatMultiplier, formatPercent, relativeTime } from '@shared/format';
+import { formatMultiplier, formatPercent } from '@shared/format';
 import { headlineRole } from '@shared/incentive';
 import type { RegionIncentive, Role } from '@shared/types';
+import { useI18n } from '../i18n';
+import { formatUpdated } from '../i18n/time';
 import { CARD_GRADIENT, ROLE_META } from '../lib/regionTheme';
 import { Badge } from './Badge';
 import { BalanceBar } from './BalanceBar';
@@ -10,7 +12,8 @@ import { BonusHeadline } from './BonusHeadline';
 import { RegionLabel } from './RegionLabel';
 
 function RolePanel({ role, percent, emphasized }: { role: Role; percent: number; emphasized: boolean }) {
-  const { label, Icon, accent, emphasis, badge } = ROLE_META[role];
+  const { t } = useI18n();
+  const { labelKey, Icon, accent, emphasis, badge } = ROLE_META[role];
   return (
     <div
       className={clsx(
@@ -21,11 +24,11 @@ function RolePanel({ role, percent, emphasized }: { role: Role; percent: number;
       <div className="flex items-center gap-2">
         <Icon className={clsx('h-6 w-6', emphasized ? accent : 'text-bone-500')} />
         <span className={clsx('font-display text-lg tracking-wide', emphasized ? 'text-bone-100' : 'text-bone-400')}>
-          {label}
+          {t(labelKey)}
         </span>
         {emphasized && (
           <Badge tone={badge} className="ml-auto">
-            Bonus
+            {t('bonusBadge')}
           </Badge>
         )}
       </div>
@@ -48,6 +51,7 @@ interface Props {
 }
 
 export function SingleServerHero({ region, now }: Props) {
+  const { t } = useI18n();
   const activeRole = headlineRole(region.survivor, region.killer);
   const themeKey = activeRole ?? 'none';
   const neverReal = !region.isReal && region.lastUpdated === null;
@@ -62,8 +66,8 @@ export function SingleServerHero({ region, now }: Props) {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <RegionLabel region={region} size="hero" />
         <div className="flex items-center gap-2">
-          {region.stale && !neverReal && <Badge tone="amber">Stale</Badge>}
-          {neverReal && <Badge tone="neutral">No data yet</Badge>}
+          {region.stale && !neverReal && <Badge tone="amber">{t('badgeStale')}</Badge>}
+          {neverReal && <Badge tone="neutral">{t('badgeNoDataYet')}</Badge>}
         </div>
       </header>
 
@@ -83,8 +87,8 @@ export function SingleServerHero({ region, now }: Props) {
       )}
 
       <footer className="mt-6 flex items-center justify-between text-xs text-bone-500">
-        <span>updated {relativeTime(region.lastUpdated, now)}</span>
-        <span>auto-refreshing</span>
+        <span>{formatUpdated(region.lastUpdated, now, t)}</span>
+        <span>{t('autoRefreshing')}</span>
       </footer>
     </section>
   );

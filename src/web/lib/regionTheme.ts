@@ -1,11 +1,12 @@
 import type { ComponentType } from 'react';
 import type { Role } from '@shared/types';
 import { SkullIcon, SurvivorIcon } from '../components/icons';
+import type { Messages } from '../i18n/types';
 
 export type ActiveKey = Role | 'none';
 
 export interface RoleMeta {
-  label: string;
+  labelKey: keyof Messages;
   Icon: ComponentType<{ className?: string }>;
   accent: string;
   /** Background + ring colour when this role carries the bonus. */
@@ -15,14 +16,14 @@ export interface RoleMeta {
 
 export const ROLE_META: Record<Role, RoleMeta> = {
   survivor: {
-    label: 'Survivor',
+    labelKey: 'roleSurvivor',
     Icon: SurvivorIcon,
     accent: 'text-survivor',
     emphasis: 'bg-survivor/10 ring-survivor/40',
     badge: 'survivor',
   },
   killer: {
-    label: 'Killer',
+    labelKey: 'roleKiller',
     Icon: SkullIcon,
     accent: 'text-blood-400',
     emphasis: 'bg-blood-600/10 ring-blood-500/40',

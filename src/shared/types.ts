@@ -57,6 +57,8 @@ export interface IncentivesPayload {
   category: string | null;
   /** When set, only this region is polled and the single-server layout is used. */
   forcedRegion: string | null;
+  /** Optional contact email shown in the first-visit banner. */
+  contactEmail: string | null;
   status: PollerStatus;
   statusReason: string | null;
   /** Hint for how often the browser should re-read this endpoint (seconds). */

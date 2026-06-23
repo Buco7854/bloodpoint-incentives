@@ -7,6 +7,7 @@ export interface CacheMeta {
   platform: string;
   provider: string;
   forcedRegion: string | null;
+  contactEmail: string | null;
   refreshSeconds: number;
   pageSize: number;
 }
@@ -105,6 +106,7 @@ export class IncentiveCache {
       version: this.version,
       category: this.category,
       forcedRegion: this.meta.forcedRegion,
+      contactEmail: this.meta.contactEmail,
       status: this.status,
       statusReason: this.statusReason,
       refreshSeconds: this.meta.refreshSeconds,

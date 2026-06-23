@@ -25,6 +25,8 @@ reads that cache. Public traffic is fully decoupled from Behaviour's API.
   all reflected in the URL query so a filtered/paginated view is shareable.
 - Real SVG country flags (render identically everywhere, unlike flag emoji) and a
   dismissible "unofficial fan project" banner for first-time visitors.
+- Fully translated into all of Dead by Daylight's supported languages
+  (auto-detected from the browser, switchable in the header).
 - Honest freshness: "updated Xs ago", per-region **stale** badges, and a clear
   status banner when data is degraded or polling is backing off.
 - **Never shows the fallback as real.** A response counts only when `ratio !== 0`.
@@ -159,6 +161,7 @@ request headers with sensible defaults.
 | `PORT` | `3000` | HTTP port |
 | `ACCESS_API_KEY` | – | If set, required on all routes except `/healthz` |
 | `ACCESS_API_KEY_HEADER` | `X-API-Key` | Header to check (Bearer also accepted) |
+| `CONTACT_EMAIL` | – | Optional contact email shown in the first-visit banner |
 | `AUTH_PROVIDER` | `steam` | `steam` (now) or `epic` (stub) |
 | `DBD_API_KEY` | – | Pre-obtained DBD session key (quick mode). If set, skips Steam login |
 | `STEAM_USERNAME` / `STEAM_PASSWORD` / `STEAM_SHARED_SECRET` | – | Full-mode headless Steam login |

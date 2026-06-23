@@ -1,11 +1,13 @@
 import clsx from 'clsx';
 import type { PollerStatus } from '@shared/types';
+import { useI18n } from '../i18n';
+import type { Messages } from '../i18n/types';
 import { AlertIcon } from './icons';
 
-const MESSAGES: Partial<Record<PollerStatus, string>> = {
-  degraded: 'Showing the last known values. Some regions are not reporting fresh data right now.',
-  paused: 'Live polling is backing off to stay friendly to the API. Values may be older than usual.',
-  error: 'The poller cannot reach the incentive service. Showing whatever was last cached.',
+const MESSAGE_KEY: Partial<Record<PollerStatus, keyof Messages>> = {
+  degraded: 'statusDegraded',
+  paused: 'statusPaused',
+  error: 'statusError',
 };
 
 interface Props {
@@ -14,8 +16,9 @@ interface Props {
 }
 
 export function StatusNotice({ status, reason }: Props) {
-  const message = MESSAGES[status];
-  if (!message) return null;
+  const { t } = useI18n();
+  const key = MESSAGE_KEY[status];
+  if (!key) return null;
   const isError = status === 'error';
   return (
     <div
@@ -29,7 +32,7 @@ export function StatusNotice({ status, reason }: Props) {
     >
       <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
       <div>
-        <p>{message}</p>
+        <p>{t(key)}</p>
         {reason && <p className="mt-0.5 text-xs opacity-70">{reason}</p>}
       </div>
     </div>

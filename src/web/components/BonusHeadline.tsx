@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { formatMultiplier, formatPercent } from '@shared/format';
 import { headlinePercent, headlineRole } from '@shared/incentive';
 import type { RegionIncentive } from '@shared/types';
+import { useI18n } from '../i18n';
 import { HEADLINE_COLOR, ROLE_META } from '../lib/regionTheme';
 import { BloodpointIcon } from './BloodpointIcon';
 
@@ -19,6 +20,7 @@ interface Props {
 
 /** The headline number (the higher role's bonus) with role + Bloodpoint icons. */
 export function BonusHeadline({ region, size }: Props) {
+  const { t } = useI18n();
   const activeRole = headlineRole(region.survivor, region.killer);
   const headline = headlinePercent(region.survivor, region.killer);
   const s = SIZES[size];
@@ -28,14 +30,15 @@ export function BonusHeadline({ region, size }: Props) {
       <div className="flex items-center gap-3">
         <BloodpointIcon className={clsx(s.bp, 'opacity-50')} />
         <div>
-          <div className={clsx('font-display font-semibold text-bone-200', s.none)}>No bonus</div>
-          <div className={clsx('text-bone-500', s.sub)}>×1.00 for both roles</div>
+          <div className={clsx('font-display font-semibold text-bone-200', s.none)}>{t('noBonus')}</div>
+          <div className={clsx('text-bone-500', s.sub)}>{t('noBonusSub')}</div>
         </div>
       </div>
     );
   }
 
   const { Icon } = ROLE_META[activeRole];
+  const subKey = activeRole === 'survivor' ? 'survivorBonus' : 'killerBonus';
   return (
     <div className="flex items-end gap-3">
       <div className="flex items-center gap-1.5 pb-1">
@@ -47,7 +50,7 @@ export function BonusHeadline({ region, size }: Props) {
           {formatPercent(headline)}
         </div>
         <div className={clsx('mt-1.5 text-bone-400', s.sub)}>
-          {formatMultiplier(headline)} {activeRole} bonus
+          {t(subKey, { mult: formatMultiplier(headline) })}
         </div>
       </div>
     </div>

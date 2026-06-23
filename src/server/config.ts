@@ -16,6 +16,9 @@ export interface AppConfig {
   accessApiKey: string | null;
   accessApiKeyHeader: string; // lowercased for lookup
 
+  /** Optional contact email shown in the first-visit banner. */
+  contactEmail: string | null;
+
   authProvider: AuthProviderName;
   /** Pre-obtained DBD session key (quick mode). */
   dbdApiKey: string | null;
@@ -145,6 +148,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
 
     accessApiKey: readString(env, 'ACCESS_API_KEY'),
     accessApiKeyHeader: (readString(env, 'ACCESS_API_KEY_HEADER') ?? 'X-API-Key').toLowerCase(),
+    contactEmail: readString(env, 'CONTACT_EMAIL'),
 
     authProvider,
     dbdApiKey,

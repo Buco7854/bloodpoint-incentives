@@ -1,17 +1,19 @@
 import clsx from 'clsx';
+import { useI18n } from '../i18n';
+import type { Messages } from '../i18n/types';
 import type { QuickFilter, SortKey } from '../lib/controls';
 import { SearchIcon } from './icons';
 
-const FILTERS: { key: QuickFilter; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'survivor', label: 'Survivor' },
-  { key: 'killer', label: 'Killer' },
-  { key: 'bonus', label: 'Has bonus' },
+const FILTERS: { key: QuickFilter; labelKey: keyof Messages }[] = [
+  { key: 'all', labelKey: 'filterAll' },
+  { key: 'survivor', labelKey: 'filterSurvivor' },
+  { key: 'killer', labelKey: 'filterKiller' },
+  { key: 'bonus', labelKey: 'filterBonus' },
 ];
 
-const SORTS: { key: SortKey; label: string }[] = [
-  { key: 'name', label: 'Name' },
-  { key: 'bonus', label: 'Bonus' },
+const SORTS: { key: SortKey; labelKey: keyof Messages }[] = [
+  { key: 'name', labelKey: 'sortName' },
+  { key: 'bonus', labelKey: 'sortBonus' },
 ];
 
 function Segmented<T extends string>({
@@ -63,6 +65,7 @@ interface Props {
 }
 
 export function Controls({ search, onSearch, filter, onFilter, sort, onSort, total, shown }: Props) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -71,22 +74,32 @@ export function Controls({ search, onSearch, filter, onFilter, sort, onSort, tot
           <input
             value={search}
             onChange={(e) => onSearch(e.target.value)}
-            placeholder="Search regions..."
-            aria-label="Search regions"
+            placeholder={t('searchPlaceholder')}
+            aria-label={t('searchAria')}
             className="w-full rounded-xl border border-white/10 bg-void-700/70 py-2.5 pl-9 pr-3 text-sm text-bone-100 outline-none transition placeholder:text-bone-500 focus:border-blood-600/50 focus:ring-2 focus:ring-blood-600/20"
           />
         </label>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-bone-500">Sort</span>
-          <Segmented options={SORTS} value={sort} onChange={onSort} ariaLabel="Sort regions" />
+          <span className="text-bone-500">{t('sort')}</span>
+          <Segmented
+            options={SORTS.map((o) => ({ key: o.key, label: t(o.labelKey) }))}
+            value={sort}
+            onChange={onSort}
+            ariaLabel={t('sort')}
+          />
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="overflow-x-auto scroll-thin">
-          <Segmented options={FILTERS} value={filter} onChange={onFilter} ariaLabel="Filter regions" />
+          <Segmented
+            options={FILTERS.map((o) => ({ key: o.key, label: t(o.labelKey) }))}
+            value={filter}
+            onChange={onFilter}
+            ariaLabel={t('filterAll')}
+          />
         </div>
         <span className="tabular text-xs text-bone-500">
-          {shown} of {total} regions
+          {t('regionCount', { shown, total })}
         </span>
       </div>
     </div>

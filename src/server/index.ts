@@ -36,6 +36,7 @@ async function main(): Promise<void> {
       platform: config.platform,
       provider: config.authProvider,
       forcedRegion: config.forceRegion,
+      contactEmail: config.contactEmail,
       refreshSeconds: config.uiRefreshSeconds,
       pageSize: config.pageSize,
     },

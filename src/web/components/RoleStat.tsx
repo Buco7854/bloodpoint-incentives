@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { formatMultiplier, formatPercent } from '@shared/format';
 import type { Role } from '@shared/types';
+import { useI18n } from '../i18n';
 import { ROLE_META } from '../lib/regionTheme';
 import { BloodpointIcon } from './BloodpointIcon';
 
@@ -12,7 +13,8 @@ interface Props {
 
 /** One role shown in BOTH formats: +X% and xY, with the Bloodpoint icon. */
 export function RoleStat({ role, percent, emphasized }: Props) {
-  const { label, Icon, accent, emphasis } = ROLE_META[role];
+  const { t } = useI18n();
+  const { labelKey, Icon, accent, emphasis } = ROLE_META[role];
   return (
     <div
       className={clsx(
@@ -23,7 +25,7 @@ export function RoleStat({ role, percent, emphasized }: Props) {
       <span className="flex items-center gap-2">
         <Icon className={clsx('h-4 w-4', emphasized ? accent : 'text-bone-500')} />
         <span className={clsx('text-sm font-medium', emphasized ? 'text-bone-100' : 'text-bone-400')}>
-          {label}
+          {t(labelKey)}
         </span>
       </span>
       <span className="flex items-center gap-2.5 tabular">

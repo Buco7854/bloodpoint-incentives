@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { relativeTime } from '@shared/format';
 import { Controls } from './components/Controls';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 import { EmptyState } from './components/EmptyState';
@@ -11,12 +10,15 @@ import { RegionGrid } from './components/RegionGrid';
 import { SingleServerHero } from './components/SingleServerHero';
 import { SkeletonGrid } from './components/Skeletons';
 import { StatusNotice } from './components/StatusNotice';
+import { useI18n } from './i18n';
+import { formatUpdated } from './i18n/time';
 import { useIncentives } from './hooks/useIncentives';
 import { useNow } from './hooks/useNow';
 import { useViewState } from './hooks/useViewState';
 import { applyControls, type QuickFilter, type SortKey } from './lib/controls';
 
 export default function App() {
+  const { t } = useI18n();
   const { data, error, loading, refresh, refreshing } = useIncentives();
   const now = useNow(1000);
 
@@ -64,23 +66,19 @@ export default function App() {
   return (
     <div className="relative z-10 flex min-h-screen flex-col">
       <Header data={data} now={now} onRefresh={refresh} refreshing={refreshing} />
-      <DisclaimerBanner />
+      <DisclaimerBanner contactEmail={data?.contactEmail ?? null} />
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="font-display text-3xl font-bold tracking-wide text-bone-100 sm:text-4xl">
-                Bloodpoint Incentives
+                {t('title')}
               </h1>
-              <p className="mt-1 max-w-xl text-sm text-bone-400">
-                Live bonus awarded for playing the under-populated role, per matchmaking region.
-              </p>
+              <p className="mt-1 max-w-xl text-sm text-bone-400">{t('subtitle')}</p>
             </div>
             {data && (
-              <p className="text-xs text-bone-500 md:hidden">
-                updated {relativeTime(data.updatedAt, now)}
-              </p>
+              <p className="text-xs text-bone-500 md:hidden">{formatUpdated(data.updatedAt, now, t)}</p>
             )}
           </div>
 
