@@ -1,5 +1,5 @@
 import type { Logger } from '../logger.js';
-import { delay, jitter } from '../util/async.js';
+import { delay, jitter, shuffle } from '../util/async.js';
 import { AuthError, isFatalError } from '../auth/errors.js';
 import {
   BhvrRateLimitedError,
@@ -37,6 +37,8 @@ export class Poller {
   private consecutiveBadPasses = 0;
   private lastVersionRefresh = Date.now();
   private fatalHandled = false;
+  /** Region query order for the current pass, reshuffled each pass. */
+  private order: string[];
 
   constructor(
     private readonly cache: IncentiveCache,
@@ -44,7 +46,9 @@ export class Poller {
     private readonly resolver: VersionResolver,
     private readonly options: PollerOptions,
     private readonly log: Logger,
-  ) {}
+  ) {
+    this.order = shuffle([...options.regionIds]);
+  }
 
   start(): void {
     if (this.loopDone) return;
@@ -88,6 +92,7 @@ export class Poller {
     if (this.index === 0) {
       this.cache.markPassStarted();
       this.anyRealThisPass = false;
+      this.order = shuffle([...this.options.regionIds]);
     }
 
     const version = this.resolver.getActive();
@@ -100,14 +105,14 @@ export class Poller {
     }
     this.cache.setVersionInfo(version.version, version.category);
 
-    const region = this.options.regionIds[this.index];
+    const region = this.order[this.index];
     if (region) await this.queryRegion(region, version);
     if (this.signal.aborted) return; // fatal error or shutdown happened mid-tick
 
     this.index = (this.index + 1) % this.options.regionIds.length;
     if (this.index === 0) await this.finishPass();
 
-    const slot = Math.min(jitter(this.baseSlotMs * this.backoff, 0.25), MAX_SLEEP_MS);
+    const slot = Math.min(jitter(this.baseSlotMs * this.backoff, 0.3), MAX_SLEEP_MS);
     await delay(slot, this.signal);
   }
 

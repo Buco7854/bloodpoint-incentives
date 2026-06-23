@@ -21,7 +21,10 @@ reads that cache. Public traffic is fully decoupled from Behaviour's API.
 - A headline number, a killer-vs-survivor **queue-balance bar**, and a warm to
   hot colour ramp as the bonus climbs.
 - Two layouts: a **responsive card grid** and a focused **single-server hero**.
-- Search, quick filters (survivor / killer / has bonus), sorting, and pagination.
+- Search, quick filters (survivor / killer / has bonus), sorting, and pagination,
+  all reflected in the URL query so a filtered/paginated view is shareable.
+- Real SVG country flags (render identically everywhere, unlike flag emoji) and a
+  dismissible "unofficial fan project" banner for first-time visitors.
 - Honest freshness: "updated Xs ago", per-region **stale** badges, and a clear
   status banner when data is degraded or polling is backing off.
 - **Never shows the fallback as real.** A response counts only when `ratio !== 0`.

@@ -1,13 +1,8 @@
 import clsx from 'clsx';
 import { formatMultiplier, formatPercent } from '@shared/format';
 import type { Role } from '@shared/types';
+import { ROLE_META } from '../lib/regionTheme';
 import { BloodpointIcon } from './BloodpointIcon';
-import { SkullIcon, SurvivorIcon } from './icons';
-
-const ROLE_META = {
-  survivor: { label: 'Survivor', Icon: SurvivorIcon, accent: 'text-survivor', emphasis: 'bg-survivor/10 ring-survivor/40' },
-  killer: { label: 'Killer', Icon: SkullIcon, accent: 'text-blood-400', emphasis: 'bg-blood-600/10 ring-blood-500/40' },
-} as const;
 
 interface Props {
   role: Role;

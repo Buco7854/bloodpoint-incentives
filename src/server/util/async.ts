@@ -27,3 +27,14 @@ export function jitter(base: number, ratio = 0.2): number {
   const span = base * ratio;
   return Math.max(0, base + (Math.random() * 2 - 1) * span);
 }
+
+/** In-place Fisher-Yates shuffle. */
+export function shuffle<T>(items: T[]): T[] {
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = items[i] as T;
+    items[i] = items[j] as T;
+    items[j] = tmp;
+  }
+  return items;
+}

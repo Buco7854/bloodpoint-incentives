@@ -29,6 +29,7 @@
     "steam-user": "^5.2.0"
   },
   "devDependencies": {
+    "@fontsource/oswald": "^5.2.8",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -36,6 +37,7 @@
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
     "concurrently": "^9.1.0",
+    "country-flag-icons": "^1.6.19",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

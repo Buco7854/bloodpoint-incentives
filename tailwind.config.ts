@@ -49,14 +49,7 @@ const config: Config = {
         killer: '#e01e2b',
       },
       fontFamily: {
-        display: [
-          'Oswald',
-          'Bebas Neue',
-          'Impact',
-          'Haettenschweiler',
-          '"Arial Narrow"',
-          'sans-serif',
-        ],
+        display: ['Oswald', 'system-ui', 'sans-serif'],
         sans: [
           'system-ui',
           '-apple-system',
