@@ -1,6 +1,7 @@
 import { memo, type MouseEvent } from 'react';
 import clsx from 'clsx';
 import { headlineRole } from '@shared/incentive';
+import type { BodyPlatform } from '@shared/platforms';
 import type { RegionIncentive } from '@shared/types';
 import { useI18n } from '../i18n';
 import { formatUpdated } from '../i18n/time';
@@ -14,16 +15,18 @@ import { RoleStat } from './RoleStat';
 
 interface Props {
   region: RegionIncentive;
+  /** The platform whose data this card shows; part of the region's URL. */
+  platform: BodyPlatform;
   now: number;
   /** True for the visitor's most-likely matchmaking region (lowest latency). */
   isUserRegion?: boolean;
-  /** Opens the region's history page (also a real `/region/<id>` link). */
+  /** Opens the region's history page (also a real `/platforms/<platform>/regions/<id>` link). */
   onOpen?: (regionId: string) => void;
 }
 
 // Memoized: the grid feeds a coarse (30s) clock, so cards only re-render when their
 // region data or the coarse time actually changes, not on every 1s dashboard tick.
-export const RegionCard = memo(function RegionCard({ region, now, isUserRegion = false, onOpen }: Props) {
+export const RegionCard = memo(function RegionCard({ region, platform, now, isUserRegion = false, onOpen }: Props) {
   const { t } = useI18n();
   const activeRole = headlineRole(region.survivor, region.killer);
   const themeKey = activeRole ?? 'none';
@@ -38,7 +41,7 @@ export const RegionCard = memo(function RegionCard({ region, now, isUserRegion =
 
   return (
     <a
-      href={`/region/${encodeURIComponent(region.region)}`}
+      href={`/platforms/${platform}/regions/${encodeURIComponent(region.region)}`}
       onClick={handleClick}
       aria-label={`${region.displayName}: ${t('regionDetails')}`}
       className={clsx(

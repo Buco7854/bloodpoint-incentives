@@ -30,6 +30,7 @@ default (the feature is off or the value is required).
 | `FORECAST_WINDOW_DAYS` | `84` | Days of history the bonus forecast trains on, independent of retention (minimum 1). |
 | `CONTACT_EMAIL` | – | Email shown on the contribute page and footer. |
 | `CONTRIBUTE_ENABLED` | `false` | Show the "contribute data" page, banner, and nav. |
+| `SEO_ENABLED` | `false` | Allow search engines to index the site. Off by default: the hub sends `noindex` everywhere and `robots.txt` disallows all. When on, it serves a crawlable `robots.txt` + `sitemap.xml`, per-page canonical/OG URLs, and indexes only the home and region pages (private routes stay `noindex`). Set `ORIGIN` so the absolute URLs are correct. |
 | `AGENT_SETUP_URL` | `https://docs.bpincentives.com/guide/running-an-agent` | Where the contribute page points for agent setup. |
 | `DISCORD_URL` | – | Community link shown next to the contact email. |
 | `MATRIX_URL` | – | Community link shown next to the contact email. |

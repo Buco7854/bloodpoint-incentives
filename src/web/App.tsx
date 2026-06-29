@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { type BodyPlatform, DEFAULT_PLATFORM } from '@shared/platforms';
 import { ALL_REGION_IDS, getRegionMeta } from '@shared/regions';
 import { Controls } from './components/Controls';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
@@ -21,7 +22,6 @@ import { useI18n } from './i18n';
 import { useClosestRegion } from './hooks/useClosestRegion';
 import { useIncentives } from './hooks/useIncentives';
 import { useNow } from './hooks/useNow';
-import { usePlatform } from './hooks/usePlatform';
 import { useRegionOverride } from './hooks/useRegionOverride';
 import { useRoute, type Route } from './hooks/useRoute';
 import { useViewState } from './hooks/useViewState';
@@ -39,7 +39,7 @@ interface DashboardProps {
 
 function Dashboard({ route, navigate }: DashboardProps) {
   const { t } = useI18n();
-  const [platform, setPlatform] = usePlatform();
+  const platform = route.name === 'home' || route.name === 'region' ? route.platform : DEFAULT_PLATFORM;
   const { data, error, loading, refresh, refreshing, disconnected } = useIncentives(platform);
   const now = useNow(1000);
 
@@ -77,7 +77,10 @@ function Dashboard({ route, navigate }: DashboardProps) {
   const single = forced || processed.length === 1;
   const contributeEnabled = data?.contributeEnabled ?? false;
   const showRegister = route.name === 'register' && contributeEnabled;
-  const openRegion = (id: string): void => navigate({ name: 'region', id });
+  const goHome = (): void => navigate({ name: 'home', platform });
+  const openRegion = (id: string): void => navigate({ name: 'region', platform, id });
+  const onPlatform = (p: BodyPlatform): void =>
+    navigate(route.name === 'region' ? { name: 'region', platform: p, id: route.id } : { name: 'home', platform: p });
 
   const onSearch = (v: string): void => setView((s) => ({ ...s, search: v, page: 0 }));
   const onFilter = (f: QuickFilter): void => setView((s) => ({ ...s, filter: f, page: 0 }));
@@ -96,6 +99,7 @@ function Dashboard({ route, navigate }: DashboardProps) {
         <div className="mx-auto max-w-md">
           <RegionCard
             region={processed[0]}
+            platform={platform}
             now={now}
             isUserRegion={processed[0].region === userRegion}
             onOpen={openRegion}
@@ -104,7 +108,7 @@ function Dashboard({ route, navigate }: DashboardProps) {
       );
     return (
       <>
-        <RegionGrid regions={paged} now={now} userRegion={userRegion} onOpen={openRegion} />
+        <RegionGrid regions={paged} platform={platform} now={now} userRegion={userRegion} onOpen={openRegion} />
         {pageCount > 1 && (
           <div className="mt-8">
             <Pagination page={clampedPage} pageCount={pageCount} onPage={onPage} />
@@ -121,8 +125,8 @@ function Dashboard({ route, navigate }: DashboardProps) {
         onRefresh={refresh}
         refreshing={refreshing}
         onRegister={() => navigate({ name: 'register' })}
-        onHome={() => navigate({ name: 'home' })}
-        onPlatform={setPlatform}
+        onHome={goHome}
+        onPlatform={onPlatform}
         onAdmin={() => navigate({ name: 'admin' })}
         onAccount={() => navigate({ name: 'account' })}
         onLogin={() => navigate({ name: 'login' })}
@@ -133,19 +137,19 @@ function Dashboard({ route, navigate }: DashboardProps) {
       )}
 
       {route.name === 'admin' ? (
-        <AdminPage onHome={() => navigate({ name: 'home' })} />
+        <AdminPage onHome={goHome} />
       ) : route.name === 'account' ? (
-        <AccountPage onHome={() => navigate({ name: 'home' })} />
+        <AccountPage onHome={goHome} />
       ) : route.name === 'region' ? (
         <RegionHistoryPage
           data={data}
           platform={platform}
           regionId={route.id}
           now={now}
-          onBack={() => navigate({ name: 'home' })}
+          onBack={goHome}
         />
       ) : showRegister ? (
-        <RegisterPage data={data} onBack={() => navigate({ name: 'home' })} />
+        <RegisterPage data={data} onBack={goHome} />
       ) : (
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
           <div className="flex flex-col gap-6">
@@ -221,9 +225,9 @@ function NotFound({ onHome }: { onHome: () => void }) {
 function redirectFor(auth: ReturnType<typeof useAuth>, route: Route): Route | null {
   if (auth.loading) return null;
   if (auth.needsSetup) return route.name === 'setup' ? null : { name: 'setup' };
-  if (route.name === 'setup') return { name: auth.authenticated ? 'home' : 'login' };
+  if (route.name === 'setup') return auth.authenticated ? { name: 'home', platform: DEFAULT_PLATFORM } : { name: 'login' };
   if (auth.authLevel === 'password') return route.name === 'login' ? null : { name: 'login' };
-  if (route.name === 'login') return auth.authenticated ? { name: 'home' } : null;
+  if (route.name === 'login') return auth.authenticated ? { name: 'home', platform: DEFAULT_PLATFORM } : null;
   if ((route.name === 'admin' || route.name === 'account') && !auth.authenticated) return { name: 'login' };
   if (auth.requireAuth && !auth.authenticated) return { name: 'login' };
   return null;
@@ -248,14 +252,14 @@ function AppRoutes() {
     case 'login':
       return <LoginPage />;
     case 'notfound':
-      return <NotFound onHome={() => navigate({ name: 'home' })} />;
+      return <NotFound onHome={() => navigate({ name: 'home', platform: DEFAULT_PLATFORM })} />;
     case 'admin':
       if (auth.user?.role !== 'admin') {
         return (
           <Centered>
             <div className="text-center">
               <p>{t('appNoAdminAccess')}</p>
-              <button className="mt-3 text-blood-400 hover:text-blood-300" onClick={() => navigate({ name: 'home' })}>
+              <button className="mt-3 text-blood-400 hover:text-blood-300" onClick={() => navigate({ name: 'home', platform: DEFAULT_PLATFORM })}>
                 {t('appBackOverview')}
               </button>
             </div>

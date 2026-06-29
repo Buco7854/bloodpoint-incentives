@@ -10,6 +10,7 @@ dbPath: ./data/bloodpoint.db
 dataRetentionDays: 31
 # forecastWindowDays: 84
 contributeEnabled: false
+seoEnabled: false
 # agentSetupUrl: https://github.com/Buco7854/bloodpoint-incentives#running-an-agent
 # discordUrl: ${DISCORD_URL:-}
 # matrixUrl: ${MATRIX_URL:-}

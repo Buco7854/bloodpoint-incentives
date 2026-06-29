@@ -27,6 +27,16 @@ var Platforms = []PlatformMeta{
 // DefaultPlatform is requested by the UI until the visitor picks another.
 const DefaultPlatform = PlatformWindows
 
+// PlatformLabel returns the human label for a platform (the id itself if unknown).
+func PlatformLabel(p Platform) string {
+	for _, m := range Platforms {
+		if m.Platform == p {
+			return m.Label
+		}
+	}
+	return string(p)
+}
+
 func IsKnownPlatform(p string) bool {
 	for _, m := range Platforms {
 		if string(m.Platform) == p {

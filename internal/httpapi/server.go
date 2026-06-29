@@ -57,6 +57,9 @@ func New(deps Deps) *Server {
 	if deps.Config != nil && len(deps.Config.CORSAllowedOrigins) > 0 {
 		router.Use(corsMiddleware(deps.Config.CORSAllowedOrigins))
 	}
+	if deps.Config == nil || !deps.Config.SEOEnabled {
+		router.Use(noindexMiddleware)
+	}
 
 	cfg := huma.DefaultConfig("Bloodpoint Incentives API", "1.0.0")
 	cfg.Info.Description = "Programmatic access to Dead by Daylight bloodpoint incentive data."
@@ -84,6 +87,7 @@ func New(deps Deps) *Server {
 		s.registerAuthRoutes()
 		s.registerAdminRoutes()
 	}
+	s.registerSEORoutes()
 	s.registerStatic() // catch-all; must be registered last
 	return s
 }

@@ -23,6 +23,7 @@ type hubFile struct {
 	DataRetentionDays  *int     `yaml:"dataRetentionDays"`
 	ForecastWindowDays *int     `yaml:"forecastWindowDays"`
 	ContributeEnabled  *bool    `yaml:"contributeEnabled"`
+	SEOEnabled         *bool    `yaml:"seoEnabled"`
 	EnableAPIKeys      *bool    `yaml:"enableApiKeys"`
 	AgentSetupURL      *string  `yaml:"agentSetupUrl"`
 	DiscordURL         *string  `yaml:"discordUrl"`
@@ -97,6 +98,7 @@ func applyHubConfigFile() error {
 	setInt("DATA_RETENTION_DAYS", f.DataRetentionDays)
 	setInt("FORECAST_WINDOW_DAYS", f.ForecastWindowDays)
 	setBool("CONTRIBUTE_ENABLED", f.ContributeEnabled)
+	setBool("SEO_ENABLED", f.SEOEnabled)
 	setBool("ENABLE_API_KEYS", f.EnableAPIKeys)
 	setStr("AGENT_SETUP_URL", f.AgentSetupURL)
 	setStr("DISCORD_URL", f.DiscordURL)

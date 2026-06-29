@@ -51,6 +51,7 @@ type Config struct {
 
 	ContactEmail      *string
 	ContributeEnabled bool
+	SEOEnabled        bool
 	AgentSetupURL     string
 	DiscordURL        *string
 	MatrixURL         *string
@@ -115,6 +116,7 @@ func Load() (*Config, error) {
 
 		ContactEmail:      strPtr("CONTACT_EMAIL"),
 		ContributeEnabled: boolOr("CONTRIBUTE_ENABLED", false),
+		SEOEnabled:        boolOr("SEO_ENABLED", false),
 		AgentSetupURL:     stringOr("AGENT_SETUP_URL", "https://docs.bpincentives.com/guide/running-an-agent"),
 		DiscordURL:        strPtr("DISCORD_URL"),
 		MatrixURL:         strPtr("MATRIX_URL"),

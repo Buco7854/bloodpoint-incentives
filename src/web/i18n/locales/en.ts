@@ -2,7 +2,7 @@ import type { Messages } from '../types';
 
 const en: Messages = {
   title: 'Bloodpoint Incentives',
-  subtitle: 'Live bonus awarded for playing the under-populated role, per matchmaking region.',
+  subtitle: 'Live Bloodpoint bonus awarded for playing the under-populated role, per matchmaking region.',
   refreshAria: 'Refresh from cache',
   updatedAgo: 'updated {time}',
   lastUpdate: 'Last update',
