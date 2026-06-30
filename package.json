@@ -1,6 +1,6 @@
 {
   "name": "bloodpoint-incentives",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "Live Dead by Daylight Bloodpoint incentives viewer (unofficial fan project).",

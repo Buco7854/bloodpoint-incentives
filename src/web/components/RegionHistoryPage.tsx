@@ -7,6 +7,7 @@ import { formatUpdated } from '../i18n/time';
 import { useHistoryRange } from '../hooks/useHistoryRange';
 import { useRegionActivity } from '../hooks/useRegionActivity';
 import { Badge } from './Badge';
+import { BalanceBar } from './BalanceBar';
 import { ErrorState } from './ErrorState';
 import { ForecastSection } from './ForecastSection';
 import { FreshnessDot } from './FreshnessChip';
@@ -182,9 +183,14 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
         </div>
 
         {region.isReal && (
-          <div className="grid gap-2 sm:max-w-md">
-            <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
-            <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
+          <div className="flex flex-col gap-3 sm:max-w-md">
+            <div className="grid gap-2">
+              <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
+              <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
+            </div>
+            {/* Same killer:survivor queue-balance bar the cards show, so the ratio is
+                visible on the region page too. */}
+            <BalanceBar ratio={region.ratio} />
           </div>
         )}
 
