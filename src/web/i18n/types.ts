@@ -73,6 +73,8 @@ export interface Messages {
   timeDaysAgo: string; // "{n}d ago"
 
   bannerDisclaimer: string;
+  /** Caveat that the bonus may be personalized per account (en fallback until localized). */
+  bannerPersonalized?: string;
   bannerNice: string;
   bannerContact: string; // "... {email}."
   bannerDismiss: string;

@@ -72,6 +72,8 @@ const en: Messages = {
 
   bannerDisclaimer:
     'Unofficial fan project, not affiliated with or endorsed by Behaviour Interactive. Dead by Daylight is a trademark of Behaviour Interactive.',
+  bannerPersonalized:
+    'Heads up: the bonus can be personalized per account, so what you see in-game may differ slightly from the values shown here.',
   bannerNice:
     "A note for Behaviour Interactive: this is a non-commercial fan project maintained by a single developer, and it is intentionally very light on your API. If anything here raises a concern, I'll gladly adjust or take it down.",
   bannerContact: 'Questions or concerns? Email {email}.',

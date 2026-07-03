@@ -19,6 +19,14 @@ Node agents. Public traffic is fully decoupled from Behaviour's API.
 > Interactive. Agents talk to DBD's private API using a real game account, so they
 > are deliberately gentle with it. Use at your own risk.
 
+> [!NOTE]
+> **Bonuses may be personalized per account.** Behaviour's incentive can in
+> principle vary from player to player (role history / matchmaking), so the values
+> shown here — what the agents' accounts observe — are indicative and may differ
+> slightly from what you see in-game. In practice the difference has been negligible
+> (a brand-new account and a seasoned one see effectively the same numbers), so the
+> site treats the value as regional; if that ever changes, it'll be revisited.
+
 <br>
 
 ## 🧭 How it works

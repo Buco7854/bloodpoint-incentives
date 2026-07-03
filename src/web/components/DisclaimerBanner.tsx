@@ -34,7 +34,7 @@ export function DisclaimerBanner({ contactEmail }: Props) {
     <aside role="complementary" className="disclaimer border-b border-amber-400/25 bg-amber-400/[0.08]">
       <div className="mx-auto flex max-w-7xl items-start gap-3 px-4 py-2.5 sm:px-6">
         <p className="flex-1 text-xs leading-relaxed text-amber-50/85">
-          {t('bannerDisclaimer')} {t('bannerNice')}
+          {t('bannerDisclaimer')} {t('bannerPersonalized')} {t('bannerNice')}
           {contactEmail && (
             <>
               {' '}
