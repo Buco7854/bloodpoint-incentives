@@ -69,6 +69,8 @@ const ja: Messages = {
 
   bannerDisclaimer:
     '非公式のファンプロジェクトであり、Behaviour Interactiveとの提携や承認を受けたものではありません。Dead by DaylightはBehaviour Interactiveの商標です。',
+  bannerPersonalized:
+    'ご注意：ボーナスはアカウントごとに調整される場合があるため、ゲーム内での表示は本サイトの数値とわずかに異なることがあります。',
   bannerNice:
     'Behaviour Interactiveの皆様へ。本サイトは個人が一人で運営する非営利のファンプロジェクトであり、APIへの負荷も意図的に最小限に抑えています。もし懸念がございましたら、喜んで修正または公開停止いたします。',
   bannerContact: 'ご質問やご懸念があれば、{email}までご連絡ください。',

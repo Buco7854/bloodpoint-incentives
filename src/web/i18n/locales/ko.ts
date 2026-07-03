@@ -69,6 +69,8 @@ const ko: Messages = {
 
   bannerDisclaimer:
     '비공식 팬 프로젝트이며 Behaviour Interactive와 제휴하거나 승인받지 않았습니다. Dead by Daylight는 Behaviour Interactive의 상표입니다.',
+  bannerPersonalized:
+    '참고: 보너스는 계정마다 다르게 적용될 수 있어, 게임 내에서 보이는 값이 여기 표시된 값과 다소 차이가 있을 수 있습니다.',
   bannerNice:
     'Behaviour Interactive 측에 드리는 말씀입니다. 이 앱은 개발자 한 명이 운영하는 비영리 팬 프로젝트이며, API 부하도 의도적으로 최소한으로 유지하고 있습니다. 문제가 되는 부분이 있다면 기꺼이 수정하거나 내리겠습니다.',
   bannerContact: '문의나 우려 사항이 있으시면 {email}(으)로 연락해 주세요.',

@@ -69,6 +69,8 @@ const zhHans: Messages = {
 
   bannerDisclaimer:
     '非官方粉丝项目，与 Behaviour Interactive 无关，也未获其认可。Dead by Daylight 是 Behaviour Interactive 的商标。',
+  bannerPersonalized:
+    '提示：奖励可能会因账号而异，游戏内实际显示的数值也许与此处略有出入。',
   bannerNice:
     '致 Behaviour Interactive：这是一个由个人独立维护的非商业粉丝项目，并刻意将 API 占用控制在极低水平。如果这里有任何让你们担忧的地方，我很乐意调整或将其下线。',
   bannerContact: '有疑问或顾虑？请邮件联系 {email}。',

@@ -69,6 +69,8 @@ const de: Messages = {
 
   bannerDisclaimer:
     'Inoffizielles Fan-Projekt, weder mit Behaviour Interactive verbunden noch von ihnen unterstützt. Dead by Daylight ist eine Marke von Behaviour Interactive.',
+  bannerPersonalized:
+    'Hinweis: Der Bonus kann pro Konto individuell angepasst sein. Was du im Spiel siehst, kann daher leicht von den hier angezeigten Werten abweichen.',
   bannerNice:
     'Ein Hinweis an Behaviour Interactive: Dies ist ein nicht-kommerzielles Fan-Projekt, das von einer einzelnen Person betreut wird und die API ganz bewusst nur sehr sparsam nutzt. Falls hier irgendetwas Anlass zur Sorge gibt, passe ich es gerne an oder nehme es offline.',
   bannerContact: 'Fragen oder Bedenken? Schreib an {email}.',

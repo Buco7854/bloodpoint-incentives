@@ -69,6 +69,8 @@ const tr: Messages = {
 
   bannerDisclaimer:
     'Resmi olmayan bir hayran projesidir; Behaviour Interactive ile bağlantılı değildir, onlar tarafından da onaylanmamıştır. Dead by Daylight, Behaviour Interactive şirketinin tescilli markasıdır.',
+  bannerPersonalized:
+    'Not: Bonus hesaba göre kişiselleştirilebilir; bu yüzden oyun içinde göreceğiniz değer, burada gösterilenlerden biraz farklı olabilir.',
   bannerNice:
     "Behaviour Interactive'e bir not: Burası, tek bir geliştirici tarafından yürütülen, ticari amaç gütmeyen bir hayran projesidir ve API'nizi bilinçli olarak çok az meşgul eder. Buradaki herhangi bir şey endişe yaratırsa, seve seve düzenler ya da yayından kaldırırım.",
   bannerContact: 'Sorularınız ya da endişeleriniz mi var? {email} adresine yazın.',

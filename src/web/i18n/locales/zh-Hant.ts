@@ -69,6 +69,8 @@ const zhHant: Messages = {
 
   bannerDisclaimer:
     '非官方粉絲專案，與 Behaviour Interactive 無關聯，亦未獲其認可。Dead by Daylight 為 Behaviour Interactive 的商標。',
+  bannerPersonalized:
+    '提醒：獎勵可能會依帳號進行個人化調整，因此您在遊戲內看到的數值，可能與這裡顯示的略有不同。',
   bannerNice:
     '致 Behaviour Interactive：這是由個人獨力維護的非商業粉絲專案，且刻意將 API 用量壓到極低。若有任何引起疑慮之處，我很樂意調整或將其下線。',
   bannerContact: '有疑問或顧慮嗎？請來信 {email}。',

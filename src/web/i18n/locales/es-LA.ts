@@ -69,6 +69,8 @@ const esLA: Messages = {
 
   bannerDisclaimer:
     'Proyecto de fans no oficial, sin afiliación ni respaldo de Behaviour Interactive. Dead by Daylight es una marca registrada de Behaviour Interactive.',
+  bannerPersonalized:
+    'Ten en cuenta: el bono puede personalizarse según la cuenta, así que lo que ves dentro del juego podría diferir un poco de los valores que se muestran aquí.',
   bannerNice:
     'Una nota para Behaviour Interactive: este es un proyecto de fans sin fines de lucro, mantenido por una sola persona, y hace un uso deliberadamente muy ligero de su API. Si algo aquí les genera alguna inquietud, con gusto lo ajusto o lo doy de baja.',
   bannerContact: '¿Dudas o inquietudes? Escribe a {email}.',
