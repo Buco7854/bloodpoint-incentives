@@ -131,6 +131,8 @@ const ja: Messages = {
   viewHistory: '履歴を見る',
   regionDetails: '詳細',
   historyTitle: 'ボーナス履歴',
+  queueBonusHeading: 'キューボーナス',
+  historySubtitle: 'この地域の生存者と殺人鬼のボーナスの推移。',
   historyBack: '概要に戻る',
   historySurvivorLine: '生存者',
   historyKillerLine: '殺人鬼',

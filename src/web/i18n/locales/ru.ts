@@ -130,6 +130,8 @@ const ru: Messages = {
   viewHistory: 'Посмотреть историю',
   regionDetails: 'Подробнее',
   historyTitle: 'История бонусов',
+  queueBonusHeading: 'Бонус очереди',
+  historySubtitle: 'Бонус этого региона за Выжившего и Убийцу с течением времени.',
   historyBack: 'Назад к обзору',
   historySurvivorLine: 'Выживший',
   historyKillerLine: 'Убийца',

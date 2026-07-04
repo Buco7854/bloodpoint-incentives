@@ -131,6 +131,8 @@ const zhHant: Messages = {
   viewHistory: '查看歷史紀錄',
   regionDetails: '詳情',
   historyTitle: '獎勵歷史紀錄',
+  queueBonusHeading: '配對獎勵',
+  historySubtitle: '此地區的倖存者與殺手獎勵隨時間變化的紀錄。',
   historyBack: '返回總覽',
   historySurvivorLine: '倖存者',
   historyKillerLine: '殺手',

@@ -130,6 +130,8 @@ const es: Messages = {
   viewHistory: 'Ver historial',
   regionDetails: 'Detalles',
   historyTitle: 'Historial de bonificaciones',
+  queueBonusHeading: 'Bonificación de cola',
+  historySubtitle: 'Bonificación de superviviente y asesino de esta región a lo largo del tiempo.',
   historyBack: 'Volver al resumen',
   historySurvivorLine: 'Superviviente',
   historyKillerLine: 'Asesino',

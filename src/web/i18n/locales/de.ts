@@ -130,6 +130,8 @@ const de: Messages = {
   viewHistory: 'Verlauf anzeigen',
   regionDetails: 'Details',
   historyTitle: 'Bonusverlauf',
+  queueBonusHeading: 'Warteschlangen-Bonus',
+  historySubtitle: 'Der Bonus für Überlebende und Killer dieser Region im Zeitverlauf.',
   historyBack: 'Zurück zur Übersicht',
   historySurvivorLine: 'Überlebender',
   historyKillerLine: 'Killer',

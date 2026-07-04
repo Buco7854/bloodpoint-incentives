@@ -131,6 +131,8 @@ const zhHans: Messages = {
   viewHistory: '查看历史',
   regionDetails: '详情',
   historyTitle: '奖励历史',
+  queueBonusHeading: '匹配奖励',
+  historySubtitle: '本区域幸存者与杀手奖励的历史变化。',
   historyBack: '返回概览',
   historySurvivorLine: '幸存者',
   historyKillerLine: '杀手',

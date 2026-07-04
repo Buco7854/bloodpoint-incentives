@@ -131,6 +131,8 @@ const ptBR: Messages = {
   viewHistory: 'Ver histórico',
   regionDetails: 'Detalhes',
   historyTitle: 'Histórico de bônus',
+  queueBonusHeading: 'Bônus de Fila',
+  historySubtitle: 'Bônus de sobrevivente e assassino desta região ao longo do tempo.',
   historyBack: 'Voltar à visão geral',
   historySurvivorLine: 'Sobrevivente',
   historyKillerLine: 'Assassino',

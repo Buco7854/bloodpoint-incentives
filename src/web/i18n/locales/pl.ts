@@ -131,6 +131,8 @@ const pl: Messages = {
   viewHistory: 'Zobacz historię',
   regionDetails: 'Szczegóły',
   historyTitle: 'Historia premii',
+  queueBonusHeading: 'Premia w kolejce',
+  historySubtitle: 'Premia ocalałego i zabójcy tego regionu w czasie.',
   historyBack: 'Powrót do przeglądu',
   historySurvivorLine: 'Ocalały',
   historyKillerLine: 'Zabójca',

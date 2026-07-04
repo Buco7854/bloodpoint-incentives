@@ -131,6 +131,8 @@ const it: Messages = {
   viewHistory: 'Mostra lo storico',
   regionDetails: 'Dettagli',
   historyTitle: 'Storico dei bonus',
+  queueBonusHeading: 'Bonus coda',
+  historySubtitle: 'Il bonus Sopravvissuto e Killer di questa regione nel tempo.',
   historyBack: 'Torna alla panoramica',
   historySurvivorLine: 'Sopravvissuto',
   historyKillerLine: 'Killer',

@@ -131,6 +131,8 @@ const th: Messages = {
   viewHistory: 'ดูประวัติ',
   regionDetails: 'รายละเอียด',
   historyTitle: 'ประวัติโบนัส',
+  queueBonusHeading: 'โบนัสคิว',
+  historySubtitle: 'โบนัส Survivor และ Killer ของภูมิภาคนี้ตลอดช่วงเวลาที่ผ่านมา',
   historyBack: 'กลับไปยังภาพรวม',
   historySurvivorLine: 'Survivor',
   historyKillerLine: 'Killer',

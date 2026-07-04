@@ -135,6 +135,8 @@ const fr: Messages = {
   viewHistory: 'Voir l’historique',
   regionDetails: 'Voir les détails',
   historyTitle: 'Historique des primes',
+  queueBonusHeading: "Bonus de file d'attente",
+  historySubtitle: "Le bonus survivant et tueur de cette région au fil du temps.",
   historyBack: 'Retour à la vue d’ensemble',
   historySurvivorLine: 'Survivant',
   historyKillerLine: 'Tueur',

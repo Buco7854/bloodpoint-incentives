@@ -130,6 +130,8 @@ const ko: Messages = {
   viewHistory: '기록 보기',
   regionDetails: '상세 정보',
   historyTitle: '보너스 기록',
+  queueBonusHeading: '대기열 보너스',
+  historySubtitle: '이 지역의 생존자 및 살인마 보너스 추이입니다.',
   historyBack: '개요로 돌아가기',
   historySurvivorLine: '생존자',
   historyKillerLine: '살인마',

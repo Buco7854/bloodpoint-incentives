@@ -131,6 +131,8 @@ const tr: Messages = {
   viewHistory: 'Geçmişi gör',
   regionDetails: 'Ayrıntılar',
   historyTitle: 'Bonus geçmişi',
+  queueBonusHeading: 'Kuyruk bonusu',
+  historySubtitle: 'Bu bölgenin zaman içindeki Hayatta Kalan ve Katil bonusu.',
   historyBack: 'Genel bakışa dön',
   historySurvivorLine: 'Hayatta Kalan',
   historyKillerLine: 'Katil',
