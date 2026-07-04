@@ -45,13 +45,14 @@ func securityHeadersMiddleware(hsts bool) func(http.Handler) http.Handler {
 
 // shellCSP is the Content-Security-Policy for the SPA shell. It allows the app's
 // own bundle, inline styles (Tailwind/chart runtime), and data: image URIs (the
-// TOTP QR code is a data URL), forbids framing, and restricts connections to the
-// same origin (the SSE stream and API are same-origin).
+// TOTP QR code is a data URL), forbids framing, and keeps connections same-origin
+// except for the closest-region latency probes, which ping AWS GameLift regional
+// endpoints (see src/web/lib/regionLatency.ts) straight from the browser.
 const shellCSP = "default-src 'self'; " +
 	"img-src 'self' data:; " +
 	"style-src 'self' 'unsafe-inline'; " +
 	"script-src 'self'; " +
-	"connect-src 'self'; " +
+	"connect-src 'self' https://*.amazonaws.com; " +
 	"frame-ancestors 'none'; " +
 	"base-uri 'self'; " +
 	"form-action 'self'"
