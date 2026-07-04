@@ -45,7 +45,7 @@ const it: Messages = {
   autoRefreshing: 'aggiornamento automatico',
 
   eventBannerTitle: '{label} è in corso!',
-  eventBannerBody: 'In questo momento ogni Punto Sangue è potenziato a {mult}, oltre a qualsiasi bonus di coda.',
+  eventBannerBody: 'Un evento {mult} Punti Sangue, che si somma a qualsiasi bonus di coda.',
   eventEndsAt: 'Termina {time}',
   breakdownTitle: 'Bonus Punti Sangue',
   breakdownBase: 'Base',

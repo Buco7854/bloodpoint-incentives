@@ -7,11 +7,7 @@ import type { BodyPlatform } from './platforms.js';
 
 export type Role = 'survivor' | 'killer';
 
-/**
- * A global Bloodpoint event (Bloodhunt / Bloodrush / Bloodfeast): a time-boxed
- * multiplier BHVR applies on top of the base and the queue bonus, the same for
- * every region and platform. Sourced from BHVR's bonusPointEventsContent schedule.
- */
+/** A global, time-boxed Bloodpoint multiplier event (Bloodhunt/…), from BHVR's schedule. */
 export interface BonusEvent {
   /** BHVR localization key, e.g. "BPEVENT_Bloodhunt_NAME". */
   key: string;

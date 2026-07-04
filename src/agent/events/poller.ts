@@ -8,18 +8,15 @@ import type { VersionResolver } from '../version/resolver.js';
 import { type ContentDeps, fetchBonusPointEvents, resolveCdnRoot } from './content.js';
 
 export interface EventPollerOptions {
-  /** How often to re-fetch the schedule (ms). The schedule is published ahead, so it
-   * is cache-friendly; start/end transitions are handled by the hub from cache. */
+  /** How often to re-fetch the schedule (ms). */
   intervalMs: number;
   content: ContentDeps;
 }
 
 /**
- * Periodically fetches BHVR's global Bloodpoint-event schedule (Bloodhunt/…) and
- * pushes it to the hub. Best-effort and defensive: it reuses the agent's existing
- * login anchor (version + AES key) and session api-key, respects the shared BHVR
- * rate gate, and never throws fatally — an event refresh failing must not disturb
- * the region polling that is the agent's main job.
+ * Periodically fetches BHVR's global Bloodpoint-event schedule and pushes it to the
+ * hub. Best-effort: reuses the login anchor + session key, respects the BHVR rate
+ * gate, and never throws fatally, so a failed refresh can't disturb region polling.
  */
 export class EventPoller {
   private readonly controller = new AbortController();

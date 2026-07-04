@@ -44,7 +44,7 @@ const ru: Messages = {
   ratio: 'соотношение {value}',
   autoRefreshing: 'автообновление',
   eventBannerTitle: '{label} уже идёт!',
-  eventBannerBody: 'Все Очки крови сейчас увеличены до {mult}, вдобавок к любому бонусу за очередь.',
+  eventBannerBody: 'Событие с множителем {mult} к Очкам крови, который прибавляется к любому бонусу за очередь.',
   eventEndsAt: 'Завершается {time}',
   breakdownTitle: 'Бонусы к Очкам крови',
   breakdownBase: 'Базовые',

@@ -44,7 +44,7 @@ const de: Messages = {
   ratio: 'Verhältnis {value}',
   autoRefreshing: 'wird automatisch aktualisiert',
   eventBannerTitle: '{label} läuft!',
-  eventBannerBody: 'Jeder Blutpunkt wird gerade auf {mult} erhöht, zusätzlich zu jedem Warteschlangen-Bonus.',
+  eventBannerBody: 'Ein {mult}-Blutpunkte-Event, das zusätzlich zu jedem Warteschlangen-Bonus obendrauf kommt.',
   eventEndsAt: 'Endet {time}',
   breakdownTitle: 'Blutpunkte-Boni',
   breakdownBase: 'Basis',

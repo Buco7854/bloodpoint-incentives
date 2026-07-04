@@ -43,8 +43,8 @@ const esLA: Messages = {
 
   ratio: 'proporción {value}',
   autoRefreshing: 'actualizando automáticamente',
-  eventBannerTitle: '¡{label} en vivo!',
-  eventBannerBody: 'Todos los Puntos de Sangre están potenciados a {mult} ahora mismo, además de cualquier bono de fila.',
+  eventBannerTitle: '¡{label} ya está en vivo!',
+  eventBannerBody: 'Evento de {mult} Puntos de Sangre, que se suma a cualquier bono de fila.',
   eventEndsAt: 'Termina {time}',
   breakdownTitle: 'Bonos de Puntos de Sangre',
   breakdownBase: 'Base',

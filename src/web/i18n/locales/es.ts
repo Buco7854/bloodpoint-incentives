@@ -43,8 +43,8 @@ const es: Messages = {
 
   ratio: 'proporción {value}',
   autoRefreshing: 'actualización automática',
-  eventBannerTitle: '¡{label} en directo!',
-  eventBannerBody: 'Todos los Puntos de Sangre están potenciados a {mult} ahora mismo, además de cualquier bonificación de cola.',
+  eventBannerTitle: '¡{label} ya está activo!',
+  eventBannerBody: 'Evento de Puntos de Sangre {mult} que se suma a cualquier bonificación de cola.',
   eventEndsAt: 'Termina {time}',
   breakdownTitle: 'Bonificaciones de Puntos de Sangre',
   breakdownBase: 'Base',

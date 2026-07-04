@@ -45,7 +45,7 @@ const zhHant: Messages = {
   autoRefreshing: '自動重新整理中',
 
   eventBannerTitle: '{label} 開跑了！',
-  eventBannerBody: '現在所有血點都提升至 {mult}，還可與配對獎勵疊加。',
+  eventBannerBody: '{mult} 血點活動，可與各地區的配對獎勵疊加。',
   eventEndsAt: '結束於 {time}',
   breakdownTitle: '血點獎勵明細',
   breakdownBase: '基礎',

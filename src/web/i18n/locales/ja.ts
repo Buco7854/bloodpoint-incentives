@@ -45,7 +45,7 @@ const ja: Messages = {
   autoRefreshing: '自動更新中',
 
   eventBannerTitle: '{label}開催中！',
-  eventBannerBody: 'ただいま、すべてのブラッドポイントが{mult}に増加中です。キューボーナスにさらに上乗せされます。',
+  eventBannerBody: 'ブラッドポイント{mult}のイベント実施中。ボーナスはお住まいの地域のキューボーナスにそのまま上乗せされます。',
   eventEndsAt: '{time}に終了',
   breakdownTitle: 'ブラッドポイントボーナス',
   breakdownBase: '基本',

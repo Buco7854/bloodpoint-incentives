@@ -10,9 +10,8 @@ const (
 	StatusError        DataStatus = "error"
 )
 
-// BonusEvent is a global, time-boxed Bloodpoint multiplier event (Bloodhunt,
-// Bloodrush, Bloodfeast) that applies on top of the base and queue bonus for every
-// region and platform. It is sourced from BHVR's bonusPointEventsContent schedule.
+// BonusEvent is a global, time-boxed Bloodpoint multiplier event (Bloodhunt/…),
+// sourced from BHVR's bonusPointEventsContent schedule.
 type BonusEvent struct {
 	Key        string  `json:"key"`
 	Label      string  `json:"label"`

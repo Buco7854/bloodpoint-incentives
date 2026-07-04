@@ -26,21 +26,13 @@ export function headlinePercent(survivor: number, killer: number): number {
   return Math.max(survivor, killer);
 }
 
-/**
- * The extra multiplier a global event contributes, as a bonus percent. Dead by
- * Daylight stacks bonuses additively: a ×2 event adds +100% on top of base+queue
- * (Base ×1.00 + Queue ×0.25 + Bloodhunt ×1.00 = ×2.25). So a multiplier of `m`
- * contributes `(m - 1) * 100` percent.
- */
+/** Bonus percent a global event contributes; additive, so multiplier `m` gives (m-1)*100. */
 export function eventBonusPercent(multiplier: number): number {
   if (!Number.isFinite(multiplier) || multiplier <= 1) return 0;
   return (multiplier - 1) * 100;
 }
 
-/**
- * The total multiplier a player actually receives for the headline role: base
- * (1) + the queue bonus + any active event bonus, all additive.
- */
+/** Total multiplier for the headline role: base + queue bonus + event bonus, all additive. */
 export function totalMultiplier(queuePercent: number, eventMultiplier: number | null): number {
   const event = eventMultiplier == null ? 0 : eventBonusPercent(eventMultiplier);
   return 1 + Math.max(0, queuePercent) / 100 + event / 100;

@@ -7,7 +7,7 @@ import { BloodpointIcon } from './BloodpointIcon';
 interface Props {
   region: RegionIncentive;
   event: BonusEvent | null;
-  /** Compact popover variant (e.g. on a card hover): tighter type, no outer card. */
+  /** Smaller variant for the card hover popover. */
   compact?: boolean;
 }
 
@@ -17,11 +17,7 @@ interface Row {
   emphasis?: boolean;
 }
 
-/**
- * The Dead by Daylight "Bloodpoint bonuses" breakdown for a region: Base, the
- * role's Queue Bonus, and any active global event (Bloodhunt/…), summed into a
- * Total, mirroring the additive multipliers the game shows in its lobby.
- */
+/** The in-game "Bloodpoint bonuses" breakdown: Base + Queue Bonus + any event, summed. */
 export function BonusBreakdown({ region, event, compact = false }: Props) {
   const { t } = useI18n();
   const role = headlineRole(region.survivor, region.killer);
@@ -46,29 +42,23 @@ export function BonusBreakdown({ region, event, compact = false }: Props) {
       }
     >
       <h2
-        className={
-          compact
-            ? 'mb-2 font-display text-xs font-semibold uppercase tracking-wide text-bone-300'
-            : 'mb-3 font-display text-lg font-semibold tracking-wide text-bone-100'
-        }
+        className={`mb-2 font-display font-semibold tracking-wide text-bone-100 ${compact ? 'text-sm' : 'mb-3 text-lg'}`}
       >
         {t('breakdownTitle')}
       </h2>
       <ul className="flex flex-col gap-1.5 text-sm">
         {rows.map((r) => (
           <li key={r.label} className="flex items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-1.5 text-bone-300">
-              <BloodpointIcon className={r.emphasis ? 'h-3.5 w-3.5 text-blood-400' : 'h-3.5 w-3.5 text-bone-500'} />
+            <span className="inline-flex min-w-0 items-center gap-1.5 text-bone-300">
+              <BloodpointIcon className={`h-3.5 w-3.5 shrink-0 ${r.emphasis ? 'text-blood-400' : 'text-bone-500'}`} />
               <span className={r.emphasis ? 'font-semibold text-blood-200' : ''}>{r.label}</span>
             </span>
-            <span className="tabular text-bone-200">{formatMultFixed(r.value)}</span>
+            <span className="tabular shrink-0 text-bone-200">{formatMultFixed(r.value)}</span>
           </li>
         ))}
         <li className="mt-1.5 flex items-center justify-between gap-3 border-t border-white/10 pt-2">
-          <span className="font-display font-semibold uppercase tracking-wide text-bone-100">
-            {t('breakdownTotal')}
-          </span>
-          <span className="tabular text-lg font-bold text-blood-300">{formatMultFixed(total)}</span>
+          <span className="font-display font-semibold tracking-wide text-bone-100">{t('breakdownTotal')}</span>
+          <span className="tabular shrink-0 text-lg font-bold text-blood-300">{formatMultFixed(total)}</span>
         </li>
       </ul>
     </div>

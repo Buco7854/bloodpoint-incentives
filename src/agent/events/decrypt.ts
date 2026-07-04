@@ -2,19 +2,9 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 
 /**
- * Decrypts a Dead by Daylight CDN content file (bonusPointEventsContent.json and
- * friends) back to its plaintext JSON string. Five layers, in order:
- *
- *   1. an 8-char ASCII magic prefix ("DbdDAwAC") is stripped,
- *   2. the rest is standard base64,
- *   3. after a 12-byte header, the body is AES-256-ECB with NO padding (truncated
- *      to a 16-byte multiple),
- *   4. the AES output is "modified base64" — the standard alphabet shifted -1 in
- *      ASCII, 0x00-padded — so add 1 to every non-zero byte to recover base64,
- *   5. the inner bytes hold a short header then a zlib stream of UTF-16LE text.
- *
- * The AES key is the per-version key from the key provider (the same value the
- * agent already resolves as the login anchor's `secretKey`); it is never hardcoded.
+ * Decrypts a Dead by Daylight CDN content file (e.g. bonusPointEventsContent.json)
+ * to plaintext JSON, undoing its five obfuscation layers (see the inline steps).
+ * The AES key is the per-version login-anchor secretKey, never hardcoded.
  */
 const MAGIC = 'DbdDAwAC';
 

@@ -15,17 +15,13 @@ export function formatMultiplier(percent: number): string {
   return `×${m.toFixed(2)}`;
 }
 
-/**
- * A raw multiplier as a compact label: whole numbers collapse (×2, ×3), others
- * keep up to two decimals (×1.5, ×2.25). Used for event multipliers.
- */
+/** Raw multiplier as a compact label (×2, ×1.5), for event multipliers. */
 export function formatMult(m: number): string {
   if (Number.isInteger(m)) return `×${m}`;
   return `×${Number(m.toFixed(2))}`;
 }
 
-/** A raw multiplier always at two decimals (×1.00, ×0.25, ×2.25), matching the
- * in-game Bloodpoint-bonuses breakdown. */
+/** Raw multiplier at two decimals (×1.00, ×2.25) for the breakdown rows. */
 export function formatMultFixed(m: number): string {
   return `×${m.toFixed(2)}`;
 }

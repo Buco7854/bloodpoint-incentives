@@ -7,7 +7,7 @@ interface Props {
   event: BonusEvent | null;
 }
 
-/** Announces a globally-active Bloodpoint event (Bloodhunt/…) across the top. */
+/** Top banner announcing the globally-active Bloodpoint event. */
 export function EventBanner({ event }: Props) {
   const { t, lang } = useI18n();
   if (!event) return null;

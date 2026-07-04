@@ -35,8 +35,7 @@ export const RegionCard = memo(function RegionCard({ region, platform, now, isUs
   const activeRole = headlineRole(region.survivor, region.killer);
   const themeKey = activeRole ?? 'none';
   const neverReal = !region.isReal && region.lastUpdated === null;
-  // During a global event, surface the combined total the player actually gets
-  // (base + this region's queue bonus + the event), matching the in-game lobby.
+  // Combined total (base + queue + event) shown only while an event is live.
   const total =
     region.isReal && event
       ? 1 + headlinePercent(region.survivor, region.killer) / 100 + eventBonusPercent(event.multiplier) / 100
@@ -74,8 +73,7 @@ export const RegionCard = memo(function RegionCard({ region, platform, now, isUs
           {total != null && (
             <div className="group/bd relative">
               <Badge tone="blood">{t('breakdownTotalChip', { mult: formatMultFixed(total) })}</Badge>
-              {/* Full breakdown on hover, so the total on the card is explained in place. */}
-              <div className="pointer-events-none absolute right-0 top-full z-30 mt-1.5 w-56 text-left opacity-0 transition-opacity duration-150 group-hover/bd:opacity-100">
+              <div className="pointer-events-none absolute right-0 top-full z-30 mt-1.5 w-60 text-left opacity-0 transition-opacity duration-150 group-hover/bd:opacity-100">
                 <BonusBreakdown region={region} event={event} compact />
               </div>
             </div>

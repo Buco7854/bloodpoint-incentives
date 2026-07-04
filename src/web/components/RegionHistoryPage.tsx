@@ -190,11 +190,8 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
                 <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
                 <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
               </div>
-              {/* Same killer:survivor queue-balance bar the cards show, so the ratio is
-                  visible on the region page too. */}
               <BalanceBar ratio={region.ratio} />
             </div>
-            {/* The in-game "Bloodpoint bonuses" breakdown: base + queue + any event. */}
             <BonusBreakdown region={region} event={data?.activeEvent ?? null} />
           </div>
         )}
