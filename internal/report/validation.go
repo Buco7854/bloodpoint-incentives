@@ -17,6 +17,8 @@ const (
 	maxAgeMs          = 10 * 60_000
 	maxStringLength   = 64
 	maxRefreshSeconds = 6 * 3600
+	maxEvents         = 200
+	maxMultiplier     = 100
 )
 
 // Input is a reading as received from an agent (already JSON-decoded).
@@ -95,4 +97,56 @@ func Validate(in Input, slot registry.Slot, nowMs int64) (domain.AgentReport, er
 		RefreshTimeSeconds: refresh,
 		MeasuredAt:         in.MeasuredAt,
 	}, nil
+}
+
+// EventInput is one Bloodpoint event as received from an agent.
+type EventInput struct {
+	Key        string  `json:"key"`
+	Label      string  `json:"label"`
+	Multiplier float64 `json:"multiplier"`
+	StartsAt   string  `json:"startsAt"`
+	EndsAt     string  `json:"endsAt"`
+}
+
+// clipStr trims a plain string to the max length (events carry non-pointer strings).
+func clipStr(s string) string {
+	if len(s) > maxStringLength {
+		return s[:maxStringLength]
+	}
+	return s
+}
+
+// ValidateEvents normalizes an agent's Bloodpoint-event schedule, dropping any
+// malformed entry rather than rejecting the whole batch (a bad row shouldn't hide
+// a live event), and capping the count so a rogue agent can't flood the store.
+func ValidateEvents(in []EventInput) []domain.BonusEvent {
+	if len(in) > maxEvents {
+		in = in[:maxEvents]
+	}
+	out := make([]domain.BonusEvent, 0, len(in))
+	for _, e := range in {
+		if !finite(e.Multiplier) || e.Multiplier < 1 || e.Multiplier > maxMultiplier {
+			continue
+		}
+		start, ok := domain.ParseISOMs(e.StartsAt)
+		if !ok {
+			continue
+		}
+		end, ok := domain.ParseISOMs(e.EndsAt)
+		if !ok || end <= start {
+			continue
+		}
+		label := clipStr(e.Label)
+		if label == "" {
+			label = clipStr(e.Key)
+		}
+		out = append(out, domain.BonusEvent{
+			Key:        clipStr(e.Key),
+			Label:      label,
+			Multiplier: e.Multiplier,
+			StartsAt:   e.StartsAt,
+			EndsAt:     e.EndsAt,
+		})
+	}
+	return out
 }

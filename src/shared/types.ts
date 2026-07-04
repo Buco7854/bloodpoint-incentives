@@ -8,6 +8,29 @@ import type { BodyPlatform } from './platforms.js';
 export type Role = 'survivor' | 'killer';
 
 /**
+ * A global Bloodpoint event (Bloodhunt / Bloodrush / Bloodfeast): a time-boxed
+ * multiplier BHVR applies on top of the base and the queue bonus, the same for
+ * every region and platform. Sourced from BHVR's bonusPointEventsContent schedule.
+ */
+export interface BonusEvent {
+  /** BHVR localization key, e.g. "BPEVENT_Bloodhunt_NAME". */
+  key: string;
+  /** Human label resolved from the key, e.g. "Bloodhunt". */
+  label: string;
+  /** Bloodpoint multiplier, e.g. 2 for a ×2 event (contributes +100%). */
+  multiplier: number;
+  /** ISO-8601 UTC start, inclusive. */
+  startsAt: string;
+  /** ISO-8601 UTC end, exclusive. */
+  endsAt: string;
+}
+
+/** The agent → hub payload carrying the current Bloodpoint-event schedule. */
+export interface AgentEventsReport {
+  events: BonusEvent[];
+}
+
+/**
  * Overall health of a platform's data, surfaced to the UI so it can show an
  * honest status instead of pretending stale/missing data is live.
  *
@@ -100,6 +123,8 @@ export interface Incentives {
   status: DataStatus;
   statusReason: string | null;
   regions: RegionIncentive[];
+  /** The globally-active Bloodpoint event (Bloodhunt/…), or null when none is live. */
+  activeEvent: BonusEvent | null;
 }
 
 /** Hub-wide UI/config bootstrap, served once by `GET /api/v1/meta`. */

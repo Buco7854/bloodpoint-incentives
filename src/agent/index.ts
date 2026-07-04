@@ -7,6 +7,7 @@ import { createAuth } from './auth/factory.js';
 import { BhvrClient } from './bhvr/client.js';
 import { RateGate } from './bhvr/rateGate.js';
 import { type AppConfig, ConfigError, loadAgentConfig } from './config.js';
+import { EventPoller } from './events/poller.js';
 import { startHealthServer } from './health.js';
 import { HubAuthError, HubClient } from './hubClient.js';
 import { Poller } from './poll/poller.js';
@@ -133,13 +134,14 @@ async function main(): Promise<void> {
 
   let shuttingDown = false;
   let pollerRef: Poller | undefined;
+  let eventPollerRef: EventPoller | undefined;
   let healthServerRef: import('node:http').Server | undefined;
   const shutdown = async (reason: string, code = 0): Promise<void> => {
     if (shuttingDown) return;
     shuttingDown = true;
     log.info({ reason, code }, 'shutting down');
     try {
-      await pollerRef?.stop();
+      await Promise.all([pollerRef?.stop(), eventPollerRef?.stop()]);
       healthServerRef?.close();
       await dispose();
     } catch (err) {
@@ -169,8 +171,31 @@ async function main(): Promise<void> {
   );
   pollerRef = poller;
 
+  // Best-effort global Bloodpoint-event schedule (Bloodhunt/…). It shares the BHVR
+  // rate gate and login anchor, and never disturbs region polling if it fails.
+  if (canPoll && runtime.eventsEnabled) {
+    eventPollerRef = new EventPoller(
+      hub,
+      provider,
+      anchorResolver,
+      resolver,
+      rateGate,
+      {
+        intervalMs: runtime.eventRefreshMs,
+        content: {
+          host: runtime.bhvrHost,
+          krakenProvider: runtime.krakenProvider,
+          clientOs: runtime.clientOs,
+          log: log.child({ component: 'events' }),
+        },
+      },
+      log.child({ component: 'events' }),
+    );
+  }
+
   if (runtime.healthPort > 0) healthServerRef = startHealthServer(runtime.healthPort, sink, log.child({ component: 'health' }));
   if (canPoll) poller.start();
+  eventPollerRef?.start();
 
   process.on('SIGTERM', () => void shutdown('SIGTERM'));
   process.on('SIGINT', () => void shutdown('SIGINT'));

@@ -10,6 +10,31 @@ const (
 	StatusError        DataStatus = "error"
 )
 
+// BonusEvent is a global, time-boxed Bloodpoint multiplier event (Bloodhunt,
+// Bloodrush, Bloodfeast) that applies on top of the base and queue bonus for every
+// region and platform. It is sourced from BHVR's bonusPointEventsContent schedule.
+type BonusEvent struct {
+	Key        string  `json:"key"`
+	Label      string  `json:"label"`
+	Multiplier float64 `json:"multiplier"`
+	StartsAt   string  `json:"startsAt"`
+	EndsAt     string  `json:"endsAt"`
+}
+
+// Active reports whether the event covers the instant nowMs (start inclusive, end
+// exclusive). A malformed timestamp makes the event inactive rather than erroring.
+func (e BonusEvent) Active(nowMs int64) bool {
+	start, ok := ParseISOMs(e.StartsAt)
+	if !ok {
+		return false
+	}
+	end, ok := ParseISOMs(e.EndsAt)
+	if !ok {
+		return false
+	}
+	return nowMs >= start && nowMs < end
+}
+
 // RegionIncentive is one region's incentive as served to the browser.
 type RegionIncentive struct {
 	Region      string  `json:"region"`
@@ -66,6 +91,7 @@ type IncentivesPayload struct {
 	Status       DataStatus        `json:"status"`
 	StatusReason *string           `json:"statusReason"`
 	Regions      []RegionIncentive `json:"regions"`
+	ActiveEvent  *BonusEvent       `json:"activeEvent"`
 }
 
 // CoveragePayload reports how many agents cover each region on a platform.

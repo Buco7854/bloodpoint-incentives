@@ -47,6 +47,18 @@ export interface Messages {
   ratio: string; // "ratio {value}"
   autoRefreshing: string;
 
+  // Global Bloodpoint event (Bloodhunt/…) banner + the in-game "Bloodpoint bonuses"
+  // breakdown (en fallback until localized).
+  eventBannerTitle?: string; // "{label} is live!"
+  eventBannerBody?: string; // "Every Bloodpoint is boosted to {mult} right now..."
+  eventEndsAt?: string; // "Ends {time}"
+  breakdownTitle?: string; // "Bloodpoint bonuses"
+  breakdownBase?: string;
+  breakdownQueueSurvivor?: string;
+  breakdownQueueKiller?: string;
+  breakdownTotal?: string;
+  breakdownTotalChip?: string; // "Total {mult}"
+
   emptyTitle: string;
   emptyBody: string;
   clearFilters: string;

@@ -15,6 +15,21 @@ export function formatMultiplier(percent: number): string {
   return `×${m.toFixed(2)}`;
 }
 
+/**
+ * A raw multiplier as a compact label: whole numbers collapse (×2, ×3), others
+ * keep up to two decimals (×1.5, ×2.25). Used for event multipliers.
+ */
+export function formatMult(m: number): string {
+  if (Number.isInteger(m)) return `×${m}`;
+  return `×${Number(m.toFixed(2))}`;
+}
+
+/** A raw multiplier always at two decimals (×1.00, ×0.25, ×2.25), matching the
+ * in-game Bloodpoint-bonuses breakdown. */
+export function formatMultFixed(m: number): string {
+  return `×${m.toFixed(2)}`;
+}
+
 /** Human "x ago" string from an ISO timestamp relative to `nowMs`. */
 export function relativeTime(iso: string | null, nowMs: number = Date.now()): string {
   if (!iso) return 'never';

@@ -4,6 +4,7 @@ import { ALL_REGION_IDS, getRegionMeta } from '@shared/regions';
 import { Controls } from './components/Controls';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 import { EmptyState } from './components/EmptyState';
+import { EventBanner } from './components/EventBanner';
 import { ErrorState } from './components/ErrorState';
 import { Footer } from './components/Footer';
 import { FreshnessChip } from './components/FreshnessChip';
@@ -102,13 +103,14 @@ function Dashboard({ route, navigate }: DashboardProps) {
             platform={platform}
             now={now}
             isUserRegion={processed[0].region === userRegion}
+            event={data?.activeEvent ?? null}
             onOpen={openRegion}
           />
         </div>
       );
     return (
       <>
-        <RegionGrid regions={paged} platform={platform} now={now} userRegion={userRegion} onOpen={openRegion} />
+        <RegionGrid regions={paged} platform={platform} now={now} userRegion={userRegion} event={data?.activeEvent ?? null} onOpen={openRegion} />
         {pageCount > 1 && (
           <div className="mt-8">
             <Pagination page={clampedPage} pageCount={pageCount} onPage={onPage} />
@@ -132,6 +134,7 @@ function Dashboard({ route, navigate }: DashboardProps) {
         onLogin={() => navigate({ name: 'login' })}
       />
       <DisclaimerBanner contactEmail={data?.contactEmail ?? null} />
+      <EventBanner event={data?.activeEvent ?? null} />
       {route.name === 'home' && contributeEnabled && (
         <RegistrationBanner onRegister={() => navigate({ name: 'register' })} />
       )}

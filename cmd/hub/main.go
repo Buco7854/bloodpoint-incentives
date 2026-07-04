@@ -116,6 +116,8 @@ func run(args []string) error {
 		PublicDir:    config.PublicDir(),
 	})
 
+	server.LoadPersistedEvents()
+
 	if len(args) > 0 && args[0] == "openapi" {
 		return printOpenAPI(server, args)
 	}

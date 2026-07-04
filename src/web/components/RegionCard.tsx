@@ -1,8 +1,9 @@
 import { memo, type MouseEvent } from 'react';
 import clsx from 'clsx';
-import { headlineRole } from '@shared/incentive';
+import { eventBonusPercent, headlinePercent, headlineRole } from '@shared/incentive';
+import { formatMultFixed } from '@shared/format';
 import type { BodyPlatform } from '@shared/platforms';
-import type { RegionIncentive } from '@shared/types';
+import type { BonusEvent, RegionIncentive } from '@shared/types';
 import { useI18n } from '../i18n';
 import { formatUpdated } from '../i18n/time';
 import { CARD_GRADIENT } from '../lib/regionTheme';
@@ -20,17 +21,25 @@ interface Props {
   now: number;
   /** True for the visitor's most-likely matchmaking region (lowest latency). */
   isUserRegion?: boolean;
+  /** The globally-active Bloodpoint event, if any; folds into the shown total. */
+  event?: BonusEvent | null;
   /** Opens the region's history page (also a real `/platforms/<platform>/regions/<id>` link). */
   onOpen?: (regionId: string) => void;
 }
 
 // Memoized: the grid feeds a coarse (30s) clock, so cards only re-render when their
 // region data or the coarse time actually changes, not on every 1s dashboard tick.
-export const RegionCard = memo(function RegionCard({ region, platform, now, isUserRegion = false, onOpen }: Props) {
+export const RegionCard = memo(function RegionCard({ region, platform, now, isUserRegion = false, event = null, onOpen }: Props) {
   const { t } = useI18n();
   const activeRole = headlineRole(region.survivor, region.killer);
   const themeKey = activeRole ?? 'none';
   const neverReal = !region.isReal && region.lastUpdated === null;
+  // During a global event, surface the combined total the player actually gets
+  // (base + this region's queue bonus + the event), matching the in-game lobby.
+  const total =
+    region.isReal && event
+      ? 1 + headlinePercent(region.survivor, region.killer) / 100 + eventBonusPercent(event.multiplier) / 100
+      : null;
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>): void => {
     // Let modifier/middle clicks open a new tab the native way.
@@ -61,6 +70,11 @@ export const RegionCard = memo(function RegionCard({ region, platform, now, isUs
           )}
           {region.stale && !neverReal && <Badge tone="amber">{t('badgeStale')}</Badge>}
           {neverReal && <Badge tone="neutral">{t('badgeNoData')}</Badge>}
+          {total != null && (
+            <Badge tone="blood" title={t('breakdownTitle')}>
+              {t('breakdownTotalChip', { mult: formatMultFixed(total) })}
+            </Badge>
+          )}
         </div>
       </header>
 

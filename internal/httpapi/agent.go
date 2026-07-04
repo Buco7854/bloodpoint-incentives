@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"sync"
 	"time"
@@ -17,6 +18,10 @@ import (
 const (
 	reportRateTolerance = 0.8
 	lastReportTTL       = time.Hour
+	// eventsSettingKey stores the last-known Bloodpoint-event schedule so it survives
+	// a hub restart (agents only re-push every couple of hours).
+	eventsSettingKey  = "bonus_point_events"
+	eventsMinReportMs = 15 * time.Second
 )
 
 type agentCtxKey int
@@ -100,6 +105,58 @@ func (s *Server) registerAgentRoutes() {
 		s.deps.Store.Ingest(rep, slotAgentID(slot))
 		return &struct{ Body reportResult }{Body: reportResult{Assignment: assignment}}, nil
 	})
+
+	huma.Register(api, huma.Operation{
+		OperationID: "agent-submit-events", Method: "POST", Path: "/api/v1/agent/events",
+		Summary: "Submit the global Bloodpoint-event schedule", Tags: []string{"agent"}, DefaultStatus: 204,
+		Security: agentSecurity(), Middlewares: huma.Middlewares{s.mwAgent},
+		Errors: []int{401, 429},
+	}, func(ctx context.Context, in *struct {
+		Body struct {
+			Events []report.EventInput `json:"events"`
+		}
+	}) (*struct{}, error) {
+		slot, _ := agentSlotOf(ctx)
+		if !s.allowReport("events "+itoa(int64(slot.AgentID)), time.Now(), eventsMinReportMs) {
+			return nil, huma.Error429TooManyRequests("reporting events too frequently")
+		}
+		events := report.ValidateEvents(in.Body.Events)
+		s.deps.Store.SetEvents(events)
+		s.persistEvents(events)
+		return &struct{}{}, nil
+	})
+}
+
+// persistEvents saves the schedule to app settings so it survives a restart.
+func (s *Server) persistEvents(events []domain.BonusEvent) {
+	if s.deps.AuthRepo == nil {
+		return
+	}
+	raw, err := json.Marshal(events)
+	if err != nil {
+		return
+	}
+	if err := s.deps.AuthRepo.SetSetting(eventsSettingKey, string(raw)); err != nil {
+		s.deps.Log.Warn("failed to persist bonus events", "err", err)
+	}
+}
+
+// LoadPersistedEvents rehydrates the Bloodpoint-event schedule from app settings on
+// boot, so a restart doesn't blank the live event until an agent next reports.
+func (s *Server) LoadPersistedEvents() {
+	if s.deps.AuthRepo == nil {
+		return
+	}
+	raw, ok := s.deps.AuthRepo.GetSetting(eventsSettingKey)
+	if !ok || raw == "" {
+		return
+	}
+	var events []domain.BonusEvent
+	if err := json.Unmarshal([]byte(raw), &events); err != nil {
+		s.deps.Log.Warn("failed to load persisted bonus events", "err", err)
+		return
+	}
+	s.deps.Store.SetEvents(events)
 }
 
 func slotAgentID(slot registry.Slot) *int64 {

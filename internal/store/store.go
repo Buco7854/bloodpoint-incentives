@@ -51,6 +51,9 @@ type Store struct {
 	listenersMu sync.Mutex
 	listeners   map[int]ChangeListener
 	nextID      int
+
+	eventsMu sync.RWMutex
+	events   []domain.BonusEvent // global Bloodpoint-event schedule (past + upcoming)
 }
 
 // New creates a store backed by the given cache (nil = in-memory).
@@ -179,6 +182,46 @@ func (s *Store) Evict(platform domain.Platform, region string) {
 	s.emitChange(platform)
 }
 
+// SetEvents replaces the global Bloodpoint-event schedule and notifies every
+// platform's listeners so live streams re-render with the new active event.
+func (s *Store) SetEvents(events []domain.BonusEvent) {
+	s.eventsMu.Lock()
+	s.events = events
+	s.eventsMu.Unlock()
+	for _, m := range domain.Platforms {
+		s.emitChange(m.Platform)
+	}
+}
+
+// Events returns the stored Bloodpoint-event schedule (a copy).
+func (s *Store) Events() []domain.BonusEvent {
+	s.eventsMu.RLock()
+	defer s.eventsMu.RUnlock()
+	return append([]domain.BonusEvent(nil), s.events...)
+}
+
+// activeEvent returns the event covering nowMs, or nil. If several overlap (they
+// shouldn't), the one ending soonest wins so the display tracks the nearest edge.
+func (s *Store) activeEvent(nowMs int64) *domain.BonusEvent {
+	s.eventsMu.RLock()
+	defer s.eventsMu.RUnlock()
+	var best *domain.BonusEvent
+	var bestEnd int64
+	for i := range s.events {
+		e := s.events[i]
+		if !e.Active(nowMs) {
+			continue
+		}
+		end, _ := domain.ParseISOMs(e.EndsAt)
+		if best == nil || end < bestEnd {
+			ev := e
+			best = &ev
+			bestEnd = end
+		}
+	}
+	return best
+}
+
 // Incentives builds the current per-region incentives for a platform.
 func (s *Store) Incentives(platform domain.Platform, now time.Time) domain.IncentivesPayload {
 	reg := s.registry()
@@ -239,6 +282,7 @@ func (s *Store) Incentives(platform domain.Platform, now time.Time) domain.Incen
 		Status:       status,
 		StatusReason: reason,
 		Regions:      regions,
+		ActiveEvent:  s.activeEvent(nowMs),
 	}
 }
 

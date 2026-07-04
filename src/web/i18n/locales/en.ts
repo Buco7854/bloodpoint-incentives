@@ -47,6 +47,16 @@ const en: Messages = {
   ratio: 'ratio {value}',
   autoRefreshing: 'auto-refreshing',
 
+  eventBannerTitle: '{label} is live!',
+  eventBannerBody: 'Every Bloodpoint is boosted to {mult} right now — on top of any queue bonus.',
+  eventEndsAt: 'Ends {time}',
+  breakdownTitle: 'Bloodpoint bonuses',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: 'Survivor Queue Bonus',
+  breakdownQueueKiller: 'Killer Queue Bonus',
+  breakdownTotal: 'Total',
+  breakdownTotalChip: 'Total {mult}',
+
   emptyTitle: 'No regions match',
   emptyBody: 'Try a different search or clear the filters to see every region.',
   clearFilters: 'Clear filters',

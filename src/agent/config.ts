@@ -7,7 +7,7 @@ import {
   SUPPORTED_PROVIDERS,
 } from '../shared/platforms.js';
 import { DEFAULT_MAX_RATIO, resolveCadence } from '../common/cadence.js';
-import { clamp, ConfigError, readInt, readString } from '../common/env.js';
+import { clamp, ConfigError, readBool, readInt, readString } from '../common/env.js';
 import { CLIENT_OS } from './version/category.js';
 
 /** Unset falls back to the default; `off`/`none` disables the bound. */
@@ -73,6 +73,11 @@ export interface AgentConfig {
 
   bhvrHost: string;
   krakenProvider: 'steam' | 'egs';
+
+  /** Fetch + report BHVR's global Bloodpoint-event schedule (Bloodhunt/…). */
+  eventsEnabled: boolean;
+  /** How often to refresh the event schedule (ms). */
+  eventRefreshMs: number;
 }
 
 /**
@@ -151,5 +156,8 @@ export function loadAgentConfig(env: NodeJS.ProcessEnv = process.env): AgentConf
 
     bhvrHost,
     krakenProvider,
+
+    eventsEnabled: readBool(env, 'AGENT_EVENTS_ENABLED', true),
+    eventRefreshMs: clamp(readInt(env, 'AGENT_EVENT_REFRESH_HOURS', 2), 1) * 3_600_000,
   };
 }

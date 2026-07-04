@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { headlinePercent, headlineRole, isRealResponse, multiplier } from './incentive.js';
-import { formatMultiplier, formatPercent, relativeTime } from './format.js';
+import {
+  eventBonusPercent,
+  headlinePercent,
+  headlineRole,
+  isRealResponse,
+  multiplier,
+  totalMultiplier,
+} from './incentive.js';
+import { formatMult, formatMultFixed, formatMultiplier, formatPercent, relativeTime } from './format.js';
 
 test('isRealResponse: only non-zero ratio is real', () => {
   assert.equal(isRealResponse(3.012), true);
@@ -34,6 +41,27 @@ test('formatMultiplier: two decimals, whole numbers collapse except x1.00', () =
   assert.equal(formatMultiplier(50), '×1.50');
   assert.equal(formatMultiplier(100), '×2');
   assert.equal(formatMultiplier(200), '×3');
+});
+
+test('event bonus is additive: a x2 event contributes +100%', () => {
+  assert.equal(eventBonusPercent(2), 100);
+  assert.equal(eventBonusPercent(1.5), 50);
+  assert.equal(eventBonusPercent(1), 0); // a x1 event is a no-op
+  assert.equal(eventBonusPercent(0), 0);
+});
+
+test('total multiplier stacks base + queue + event (the in-game x2.25 case)', () => {
+  // Base 1.00 + Survivor Queue Bonus 0.25 + Bloodhunt 1.00 = 2.25
+  assert.equal(totalMultiplier(25, 2), 2.25);
+  assert.equal(totalMultiplier(75, null), 1.75); // no event
+  assert.equal(totalMultiplier(0, 2), 2); // event only
+});
+
+test('raw multiplier formatting', () => {
+  assert.equal(formatMult(2), '×2');
+  assert.equal(formatMult(1.5), '×1.5');
+  assert.equal(formatMultFixed(2.25), '×2.25');
+  assert.equal(formatMultFixed(1), '×1.00');
 });
 
 test('relativeTime buckets', () => {

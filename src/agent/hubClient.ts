@@ -1,4 +1,4 @@
-import type { AgentAssignment, AgentReport } from '../shared/types.js';
+import type { AgentAssignment, AgentReport, BonusEvent } from '../shared/types.js';
 import { isKnownPlatform } from '../shared/platforms.js';
 import { isKnownRegion } from '../shared/regions.js';
 
@@ -68,6 +68,11 @@ export class HubClient {
     } catch {
       return null; // a malformed assignment in a report reply isn't worth aborting on
     }
+  }
+
+  /** Push the global Bloodpoint-event schedule; the hub keeps the latest. */
+  async reportEvents(events: BonusEvent[], signal?: AbortSignal): Promise<void> {
+    await this.send('POST', '/api/v1/agent/events', { events }, signal);
   }
 
   private async send(

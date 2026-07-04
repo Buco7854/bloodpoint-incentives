@@ -8,6 +8,7 @@ import { useHistoryRange } from '../hooks/useHistoryRange';
 import { useRegionActivity } from '../hooks/useRegionActivity';
 import { Badge } from './Badge';
 import { BalanceBar } from './BalanceBar';
+import { BonusBreakdown } from './BonusBreakdown';
 import { ErrorState } from './ErrorState';
 import { ForecastSection } from './ForecastSection';
 import { FreshnessDot } from './FreshnessChip';
@@ -183,14 +184,18 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
         </div>
 
         {region.isReal && (
-          <div className="flex flex-col gap-3 sm:max-w-md">
-            <div className="grid gap-2">
-              <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
-              <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-3">
+              <div className="grid gap-2">
+                <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
+                <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
+              </div>
+              {/* Same killer:survivor queue-balance bar the cards show, so the ratio is
+                  visible on the region page too. */}
+              <BalanceBar ratio={region.ratio} />
             </div>
-            {/* Same killer:survivor queue-balance bar the cards show, so the ratio is
-                visible on the region page too. */}
-            <BalanceBar ratio={region.ratio} />
+            {/* The in-game "Bloodpoint bonuses" breakdown: base + queue + any event. */}
+            <BonusBreakdown region={region} event={data?.activeEvent ?? null} />
           </div>
         )}
 
