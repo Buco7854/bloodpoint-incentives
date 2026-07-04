@@ -9,13 +9,10 @@ interface Props {
   role: Role;
   percent: number;
   emphasized: boolean;
-  /** Show the ×multiplier alongside the +%. Off where a full breakdown owns the
-   * multipliers (region page), so the role's ×1.75 doesn't clash with the Total. */
-  showMultiplier?: boolean;
 }
 
-/** One role's queue bonus as +X% (and optionally ×Y), with the Bloodpoint icon. */
-export function RoleStat({ role, percent, emphasized, showMultiplier = true }: Props) {
+/** One role shown in BOTH formats: +X% and xY, with the Bloodpoint icon. */
+export function RoleStat({ role, percent, emphasized }: Props) {
   const { t } = useI18n();
   const { labelKey, Icon, accent, emphasis } = ROLE_META[role];
   return (
@@ -35,12 +32,10 @@ export function RoleStat({ role, percent, emphasized, showMultiplier = true }: P
         <span className={clsx('text-sm font-semibold', emphasized ? accent : 'text-bone-300')}>
           {formatPercent(percent)}
         </span>
-        {showMultiplier && (
-          <span className="flex items-center gap-1 text-xs text-bone-500">
-            <BloodpointIcon className="h-3.5 w-3.5" />
-            {formatMultiplier(percent)}
-          </span>
-        )}
+        <span className="flex items-center gap-1 text-xs text-bone-500">
+          <BloodpointIcon className="h-3.5 w-3.5" />
+          {formatMultiplier(percent)}
+        </span>
       </span>
     </div>
   );

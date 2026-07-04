@@ -186,9 +186,12 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
         {region.isReal && (
           <div className="grid gap-4 sm:grid-cols-2 sm:items-center">
             <div className="flex flex-col gap-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-bone-500">
+                {t('queueBonusHeading')}
+              </p>
               <div className="grid gap-2">
-                <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} showMultiplier={false} />
-                <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} showMultiplier={false} />
+                <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
+                <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
               </div>
               <BalanceBar ratio={region.ratio} />
             </div>
@@ -198,9 +201,12 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
 
         <section className="rounded-2xl border border-white/10 bg-void-800/50 p-4 sm:p-5">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-display text-lg font-semibold tracking-wide text-bone-100">
-              {t('historyTitle')}
-            </h2>
+            <div>
+              <h2 className="font-display text-lg font-semibold tracking-wide text-bone-100">
+                {t('historyTitle')}
+              </h2>
+              <p className="mt-0.5 text-xs text-bone-500">{t('historySubtitle')}</p>
+            </div>
             <ScaleToggle value={null} onChange={applyPreset} />
           </div>
           {renderChart()}

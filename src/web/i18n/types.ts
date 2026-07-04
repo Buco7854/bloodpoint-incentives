@@ -129,7 +129,9 @@ export interface Messages {
 
   regionDetails?: string;
   viewHistory?: string;
+  queueBonusHeading?: string; // discreet label above the per-role bonus rows
   historyTitle?: string;
+  historySubtitle?: string; // clarifies the chart is this region's per-role bonus
   historyBack?: string;
   historySurvivorLine?: string; // defaults to roleSurvivor
   historyKillerLine?: string; // defaults to roleKiller

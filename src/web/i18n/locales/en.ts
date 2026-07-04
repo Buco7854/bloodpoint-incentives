@@ -134,7 +134,9 @@ const en: Messages = {
 
   regionDetails: 'Click for details',
   viewHistory: 'View history',
+  queueBonusHeading: 'Queue bonus',
   historyTitle: 'Bonus history',
+  historySubtitle: "This region's survivor and killer bonus over time.",
   historyBack: 'Back to overview',
   historySurvivorLine: 'Survivor',
   historyKillerLine: 'Killer',
