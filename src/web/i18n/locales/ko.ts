@@ -43,7 +43,7 @@ const ko: Messages = {
 
   ratio: '비율 {value}',
   autoRefreshing: '자동 새로고침 중',
-  eventBannerTitle: '{label} 이벤트가 시작됐어요!',
+  eventBannerTitle: '{label} 진행 중!',
   eventBannerBody: '{mult} 블러드포인트 이벤트로, 대기열 보너스와 합산되어 함께 적용됩니다.',
   eventEndsAt: '{time} 종료',
   breakdownTitle: '블러드포인트 보너스',

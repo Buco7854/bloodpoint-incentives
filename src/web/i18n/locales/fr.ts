@@ -47,8 +47,8 @@ const fr: Messages = {
   ratio: 'ratio {value}',
   autoRefreshing: 'actualisation auto',
 
-  eventBannerTitle: "{label}, c'est parti !",
-  eventBannerBody: "Un événement Points de Sang {mult} qui s'ajoute à votre bonus de file d'attente.",
+  eventBannerTitle: '{label} en cours !',
+  eventBannerBody: "Un événement {mult} sur les Points de Sang, qui s'ajoute au bonus de file d'attente.",
   eventEndsAt: 'Se termine {time}',
   breakdownTitle: 'Bonus de points de sang',
   breakdownBase: 'Base',

@@ -187,8 +187,8 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
           <div className="grid gap-4 sm:grid-cols-2 sm:items-center">
             <div className="flex flex-col gap-3">
               <div className="grid gap-2">
-                <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />
-                <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} />
+                <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} showMultiplier={false} />
+                <RoleStat role="killer" percent={region.killer} emphasized={region.killer > 0} showMultiplier={false} />
               </div>
               <BalanceBar ratio={region.ratio} />
             </div>

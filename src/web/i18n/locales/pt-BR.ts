@@ -44,7 +44,7 @@ const ptBR: Messages = {
   ratio: 'proporção {value}',
   autoRefreshing: 'atualização automática',
 
-  eventBannerTitle: '{label} está no ar!',
+  eventBannerTitle: '{label} está ativo!',
   eventBannerBody: 'Evento de {mult} em Pontos de Sangue, somado a qualquer bônus de fila.',
   eventEndsAt: 'Termina {time}',
   breakdownTitle: 'Bônus de Pontos de Sangue',

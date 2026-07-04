@@ -44,7 +44,7 @@ const zhHant: Messages = {
   ratio: '比率 {value}',
   autoRefreshing: '自動重新整理中',
 
-  eventBannerTitle: '{label} 開跑了！',
+  eventBannerTitle: '{label} 進行中！',
   eventBannerBody: '{mult} 血點活動，可與各地區的配對獎勵疊加。',
   eventEndsAt: '結束於 {time}',
   breakdownTitle: '血點獎勵明細',
