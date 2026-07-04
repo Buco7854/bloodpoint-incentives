@@ -44,7 +44,7 @@ const th: Messages = {
   ratio: 'อัตราส่วน {value}',
   autoRefreshing: 'กำลังรีเฟรชอัตโนมัติ',
   eventBannerTitle: '{label} เริ่มแล้ว!',
-  eventBannerBody: 'ตอนนี้ Bloodpoint ทุกแต้มถูกเพิ่มเป็น {mult} — เพิ่มจากโบนัสคิวที่มีอยู่',
+  eventBannerBody: 'ตอนนี้ Bloodpoint ทุกแต้มถูกเพิ่มเป็น {mult} เพิ่มจากโบนัสคิวที่มีอยู่',
   eventEndsAt: 'สิ้นสุด {time}',
   breakdownTitle: 'โบนัส Bloodpoint',
   breakdownBase: 'พื้นฐาน',

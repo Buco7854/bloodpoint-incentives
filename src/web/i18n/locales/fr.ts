@@ -48,7 +48,7 @@ const fr: Messages = {
   autoRefreshing: 'actualisation auto',
 
   eventBannerTitle: '{label} est en cours !',
-  eventBannerBody: "Tous les points de sang sont multipliés à {mult} en ce moment — en plus de tout bonus de file d'attente.",
+  eventBannerBody: "Tous les points de sang sont multipliés à {mult} en ce moment, en plus de tout bonus de file d'attente.",
   eventEndsAt: 'Se termine {time}',
   breakdownTitle: 'Bonus de points de sang',
   breakdownBase: 'Base',

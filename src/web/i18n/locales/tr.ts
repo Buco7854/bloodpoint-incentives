@@ -45,7 +45,7 @@ const tr: Messages = {
   autoRefreshing: 'otomatik yenileniyor',
 
   eventBannerTitle: '{label} başladı!',
-  eventBannerBody: 'Şu anda her Kan Puanı {mult} katına çıkarıldı — üstelik her türlü kuyruk bonusuna ek olarak.',
+  eventBannerBody: 'Şu anda her Kan Puanı {mult} katına çıkarıldı, üstelik her türlü kuyruk bonusuna ek olarak.',
   eventEndsAt: '{time} sona eriyor',
   breakdownTitle: 'Kan Puanı bonusları',
   breakdownBase: 'Temel',

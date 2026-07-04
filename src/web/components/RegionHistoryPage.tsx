@@ -184,7 +184,7 @@ export function RegionHistoryPage({ data, platform, regionId, now, onBack }: Pro
         </div>
 
         {region.isReal && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 sm:items-center">
             <div className="flex flex-col gap-3">
               <div className="grid gap-2">
                 <RoleStat role="survivor" percent={region.survivor} emphasized={region.survivor > 0} />

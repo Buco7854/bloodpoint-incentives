@@ -27,6 +27,19 @@ func TestActiveEventInSnapshot(t *testing.T) {
 	}
 }
 
+func TestOverlappingEventsPickStrongest(t *testing.T) {
+	s, _, _ := newTestStore(t)
+	now := time.Date(2026, 7, 4, 12, 0, 0, 0, time.UTC)
+	s.SetEvents([]domain.BonusEvent{
+		{Label: "Bloodhunt", Multiplier: 2, StartsAt: "2026-07-01T00:00:00Z", EndsAt: "2026-07-10T00:00:00Z"},
+		{Label: "Bloodfeast", Multiplier: 3, StartsAt: "2026-07-03T00:00:00Z", EndsAt: "2026-07-06T00:00:00Z"},
+	})
+	ev := s.Incentives(domain.PlatformWindows, now).ActiveEvent
+	if ev == nil || ev.Label != "Bloodfeast" {
+		t.Fatalf("expected the stronger overlapping event (Bloodfeast x3), got %+v", ev)
+	}
+}
+
 func TestNoActiveEventWhenAllPastOrFuture(t *testing.T) {
 	s, _, _ := newTestStore(t)
 	now := time.Date(2026, 7, 4, 12, 0, 0, 0, time.UTC)

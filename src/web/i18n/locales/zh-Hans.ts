@@ -45,7 +45,7 @@ const zhHans: Messages = {
   autoRefreshing: '自动刷新中',
 
   eventBannerTitle: '{label} 现已开启！',
-  eventBannerBody: '现在所有血点均提升至 {mult}——并可与匹配奖励叠加。',
+  eventBannerBody: '现在所有血点均提升至 {mult}，并可与匹配奖励叠加。',
   eventEndsAt: '{time} 结束',
   breakdownTitle: '血点奖励',
   breakdownBase: '基础',

@@ -133,8 +133,8 @@ function Dashboard({ route, navigate }: DashboardProps) {
         onAccount={() => navigate({ name: 'account' })}
         onLogin={() => navigate({ name: 'login' })}
       />
-      <DisclaimerBanner contactEmail={data?.contactEmail ?? null} />
       <EventBanner event={data?.activeEvent ?? null} />
+      <DisclaimerBanner contactEmail={data?.contactEmail ?? null} />
       {route.name === 'home' && contributeEnabled && (
         <RegistrationBanner onRegister={() => navigate({ name: 'register' })} />
       )}

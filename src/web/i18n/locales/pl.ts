@@ -45,7 +45,7 @@ const pl: Messages = {
   autoRefreshing: 'automatyczne odświeżanie',
 
   eventBannerTitle: 'Trwa {label}!',
-  eventBannerBody: 'Wszystkie punkty krwi są teraz zwiększone do {mult} — oprócz wszelkich premii w kolejce.',
+  eventBannerBody: 'Wszystkie punkty krwi są teraz zwiększone do {mult}, oprócz wszelkich premii w kolejce.',
   eventEndsAt: 'Kończy się {time}',
   breakdownTitle: 'Premie do punktów krwi',
   breakdownBase: 'Podstawa',

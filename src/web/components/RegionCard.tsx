@@ -9,6 +9,7 @@ import { formatUpdated } from '../i18n/time';
 import { CARD_GRADIENT } from '../lib/regionTheme';
 import { Badge } from './Badge';
 import { BalanceBar } from './BalanceBar';
+import { BonusBreakdown } from './BonusBreakdown';
 import { BonusHeadline } from './BonusHeadline';
 import { ChartIcon, PinIcon } from './icons';
 import { RegionLabel } from './RegionLabel';
@@ -54,7 +55,7 @@ export const RegionCard = memo(function RegionCard({ region, platform, now, isUs
       onClick={handleClick}
       aria-label={`${region.displayName}: ${t('regionDetails')}`}
       className={clsx(
-        'group flex animate-fade-up flex-col gap-4 rounded-2xl border bg-gradient-to-br p-5 shadow-card transition hover:-translate-y-0.5 hover:border-white/25 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blood-500/50',
+        'group relative flex animate-fade-up flex-col gap-4 rounded-2xl border bg-gradient-to-br p-5 shadow-card transition hover:z-20 hover:-translate-y-0.5 hover:border-white/25 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blood-500/50',
         CARD_GRADIENT[themeKey],
         isUserRegion && 'ring-2 ring-blood-400/70',
       )}
@@ -71,9 +72,13 @@ export const RegionCard = memo(function RegionCard({ region, platform, now, isUs
           {region.stale && !neverReal && <Badge tone="amber">{t('badgeStale')}</Badge>}
           {neverReal && <Badge tone="neutral">{t('badgeNoData')}</Badge>}
           {total != null && (
-            <Badge tone="blood" title={t('breakdownTitle')}>
-              {t('breakdownTotalChip', { mult: formatMultFixed(total) })}
-            </Badge>
+            <div className="group/bd relative">
+              <Badge tone="blood">{t('breakdownTotalChip', { mult: formatMultFixed(total) })}</Badge>
+              {/* Full breakdown on hover, so the total on the card is explained in place. */}
+              <div className="pointer-events-none absolute right-0 top-full z-30 mt-1.5 w-56 text-left opacity-0 transition-opacity duration-150 group-hover/bd:opacity-100">
+                <BonusBreakdown region={region} event={event} compact />
+              </div>
+            </div>
           )}
         </div>
       </header>

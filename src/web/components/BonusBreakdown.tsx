@@ -7,6 +7,8 @@ import { BloodpointIcon } from './BloodpointIcon';
 interface Props {
   region: RegionIncentive;
   event: BonusEvent | null;
+  /** Compact popover variant (e.g. on a card hover): tighter type, no outer card. */
+  compact?: boolean;
 }
 
 interface Row {
@@ -18,9 +20,9 @@ interface Row {
 /**
  * The Dead by Daylight "Bloodpoint bonuses" breakdown for a region: Base, the
  * role's Queue Bonus, and any active global event (Bloodhunt/…), summed into a
- * Total — mirroring the additive multipliers the game shows in its lobby.
+ * Total, mirroring the additive multipliers the game shows in its lobby.
  */
-export function BonusBreakdown({ region, event }: Props) {
+export function BonusBreakdown({ region, event, compact = false }: Props) {
   const { t } = useI18n();
   const role = headlineRole(region.survivor, region.killer);
   const queue = role ? headlinePercent(region.survivor, region.killer) / 100 : 0;
@@ -36,8 +38,20 @@ export function BonusBreakdown({ region, event }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-void-800/50 p-4 sm:p-5">
-      <h2 className="mb-3 font-display text-sm font-semibold uppercase tracking-wide text-bone-300">
+    <div
+      className={
+        compact
+          ? 'rounded-xl border border-white/10 bg-void-800 p-3 shadow-lg'
+          : 'rounded-2xl border border-white/10 bg-void-800/50 p-4 sm:p-5'
+      }
+    >
+      <h2
+        className={
+          compact
+            ? 'mb-2 font-display text-xs font-semibold uppercase tracking-wide text-bone-300'
+            : 'mb-3 font-display text-lg font-semibold tracking-wide text-bone-100'
+        }
+      >
         {t('breakdownTitle')}
       </h2>
       <ul className="flex flex-col gap-1.5 text-sm">

@@ -200,8 +200,11 @@ func (s *Store) Events() []domain.BonusEvent {
 	return append([]domain.BonusEvent(nil), s.events...)
 }
 
-// activeEvent returns the event covering nowMs, or nil. If several overlap (they
-// shouldn't), the one ending soonest wins so the display tracks the nearest edge.
+// activeEvent returns the event covering nowMs, or nil. BHVR schedules these events
+// without overlap, so in practice at most one is ever active. If several somehow
+// overlap, the strongest multiplier wins (that's the bonus a player actually cares
+// about), with the nearest end time breaking a tie so the banner's countdown is
+// meaningful.
 func (s *Store) activeEvent(nowMs int64) *domain.BonusEvent {
 	s.eventsMu.RLock()
 	defer s.eventsMu.RUnlock()
@@ -213,7 +216,7 @@ func (s *Store) activeEvent(nowMs int64) *domain.BonusEvent {
 			continue
 		}
 		end, _ := domain.ParseISOMs(e.EndsAt)
-		if best == nil || end < bestEnd {
+		if best == nil || e.Multiplier > best.Multiplier || (e.Multiplier == best.Multiplier && end < bestEnd) {
 			ev := e
 			best = &ev
 			bestEnd = end

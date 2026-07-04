@@ -48,7 +48,7 @@ const en: Messages = {
   autoRefreshing: 'auto-refreshing',
 
   eventBannerTitle: '{label} is live!',
-  eventBannerBody: 'Every Bloodpoint is boosted to {mult} right now — on top of any queue bonus.',
+  eventBannerBody: 'Every Bloodpoint is boosted to {mult} right now, on top of any queue bonus.',
   eventEndsAt: 'Ends {time}',
   breakdownTitle: 'Bloodpoint bonuses',
   breakdownBase: 'Base',

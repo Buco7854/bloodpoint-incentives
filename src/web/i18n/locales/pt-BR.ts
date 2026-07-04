@@ -45,7 +45,7 @@ const ptBR: Messages = {
   autoRefreshing: 'atualização automática',
 
   eventBannerTitle: '{label} está ativo!',
-  eventBannerBody: 'Todos os Pontos de Sangue estão aumentados para {mult} agora — além de qualquer bônus de fila.',
+  eventBannerBody: 'Todos os Pontos de Sangue estão aumentados para {mult} agora, além de qualquer bônus de fila.',
   eventEndsAt: 'Termina {time}',
   breakdownTitle: 'Bônus de Pontos de Sangue',
   breakdownBase: 'Base',
