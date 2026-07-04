@@ -44,6 +44,16 @@ const ptBR: Messages = {
   ratio: 'proporção {value}',
   autoRefreshing: 'atualização automática',
 
+  eventBannerTitle: '{label} está ativo!',
+  eventBannerBody: 'Todos os Pontos de Sangue estão aumentados para {mult} agora — além de qualquer bônus de fila.',
+  eventEndsAt: 'Termina {time}',
+  breakdownTitle: 'Bônus de Pontos de Sangue',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: 'Bônus de Fila de Sobrevivente',
+  breakdownQueueKiller: 'Bônus de Fila de Assassino',
+  breakdownTotal: 'Total',
+  breakdownTotalChip: 'Total {mult}',
+
   emptyTitle: 'Nenhuma região encontrada',
   emptyBody: 'Tente outra busca ou limpe os filtros para ver todas as regiões.',
   clearFilters: 'Limpar filtros',

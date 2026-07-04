@@ -44,6 +44,16 @@ const pl: Messages = {
   ratio: 'stosunek {value}',
   autoRefreshing: 'automatyczne odświeżanie',
 
+  eventBannerTitle: 'Trwa {label}!',
+  eventBannerBody: 'Wszystkie punkty krwi są teraz zwiększone do {mult} — oprócz wszelkich premii w kolejce.',
+  eventEndsAt: 'Kończy się {time}',
+  breakdownTitle: 'Premie do punktów krwi',
+  breakdownBase: 'Podstawa',
+  breakdownQueueSurvivor: 'Premia w kolejce ocalałego',
+  breakdownQueueKiller: 'Premia w kolejce zabójcy',
+  breakdownTotal: 'Razem',
+  breakdownTotalChip: 'Razem {mult}',
+
   emptyTitle: 'Brak pasujących regionów',
   emptyBody: 'Spróbuj wyszukać inaczej lub wyczyść filtry, aby zobaczyć wszystkie regiony.',
   clearFilters: 'Wyczyść filtry',

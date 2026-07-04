@@ -43,6 +43,15 @@ const es: Messages = {
 
   ratio: 'proporción {value}',
   autoRefreshing: 'actualización automática',
+  eventBannerTitle: '¡{label} en directo!',
+  eventBannerBody: 'Todos los Puntos de Sangre están potenciados a {mult} ahora mismo, además de cualquier bonificación de cola.',
+  eventEndsAt: 'Termina {time}',
+  breakdownTitle: 'Bonificaciones de Puntos de Sangre',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: 'Bonificación de cola de superviviente',
+  breakdownQueueKiller: 'Bonificación de cola de asesino',
+  breakdownTotal: 'Total',
+  breakdownTotalChip: 'Total {mult}',
 
   emptyTitle: 'No hay regiones que coincidan',
   emptyBody: 'Prueba con otra búsqueda o borra los filtros para ver todas las regiones.',

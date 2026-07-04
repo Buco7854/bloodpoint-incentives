@@ -44,6 +44,16 @@ const ja: Messages = {
   ratio: '比率 {value}',
   autoRefreshing: '自動更新中',
 
+  eventBannerTitle: '{label}開催中！',
+  eventBannerBody: 'ただいま、すべてのブラッドポイントが{mult}に増加中です。キューボーナスにさらに上乗せされます。',
+  eventEndsAt: '{time}に終了',
+  breakdownTitle: 'ブラッドポイントボーナス',
+  breakdownBase: '基本',
+  breakdownQueueSurvivor: '生存者キューボーナス',
+  breakdownQueueKiller: '殺人鬼キューボーナス',
+  breakdownTotal: '合計',
+  breakdownTotalChip: '合計 {mult}',
+
   emptyTitle: '一致する地域がありません',
   emptyBody: '別のキーワードで検索するか、フィルターをクリアしてすべての地域を表示してください。',
   clearFilters: 'フィルターをクリア',

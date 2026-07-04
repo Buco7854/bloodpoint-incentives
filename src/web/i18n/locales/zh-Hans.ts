@@ -44,6 +44,16 @@ const zhHans: Messages = {
   ratio: '比率 {value}',
   autoRefreshing: '自动刷新中',
 
+  eventBannerTitle: '{label} 现已开启！',
+  eventBannerBody: '现在所有血点均提升至 {mult}——并可与匹配奖励叠加。',
+  eventEndsAt: '{time} 结束',
+  breakdownTitle: '血点奖励',
+  breakdownBase: '基础',
+  breakdownQueueSurvivor: '幸存者匹配奖励',
+  breakdownQueueKiller: '杀手匹配奖励',
+  breakdownTotal: '合计',
+  breakdownTotalChip: '合计 {mult}',
+
   emptyTitle: '没有符合条件的地区',
   emptyBody: '换个搜索词，或清除筛选条件即可查看所有地区。',
   clearFilters: '清除筛选',

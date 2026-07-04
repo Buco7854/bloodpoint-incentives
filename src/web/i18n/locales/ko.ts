@@ -43,6 +43,15 @@ const ko: Messages = {
 
   ratio: '비율 {value}',
   autoRefreshing: '자동 새로고침 중',
+  eventBannerTitle: '{label} 진행 중!',
+  eventBannerBody: '지금 모든 블러드포인트가 {mult}로 증가합니다. 대기열 보너스와 별도로 적용됩니다.',
+  eventEndsAt: '{time} 종료',
+  breakdownTitle: '블러드포인트 보너스',
+  breakdownBase: '기본',
+  breakdownQueueSurvivor: '생존자 대기열 보너스',
+  breakdownQueueKiller: '살인마 대기열 보너스',
+  breakdownTotal: '합계',
+  breakdownTotalChip: '합계 {mult}',
 
   emptyTitle: '일치하는 지역이 없습니다',
   emptyBody: '다른 검색어를 사용하거나 필터를 초기화하여 모든 지역을 확인하세요.',

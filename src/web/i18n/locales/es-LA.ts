@@ -43,6 +43,15 @@ const esLA: Messages = {
 
   ratio: 'proporción {value}',
   autoRefreshing: 'actualizando automáticamente',
+  eventBannerTitle: '¡{label} en vivo!',
+  eventBannerBody: 'Todos los Puntos de Sangre están potenciados a {mult} ahora mismo, además de cualquier bono de fila.',
+  eventEndsAt: 'Termina {time}',
+  breakdownTitle: 'Bonos de Puntos de Sangre',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: 'Bono de fila de Superviviente',
+  breakdownQueueKiller: 'Bono de fila de Asesino',
+  breakdownTotal: 'Total',
+  breakdownTotalChip: 'Total {mult}',
 
   emptyTitle: 'Ninguna región coincide',
   emptyBody: 'Prueba con otra búsqueda o borra los filtros para ver todas las regiones.',

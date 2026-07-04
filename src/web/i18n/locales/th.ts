@@ -43,6 +43,15 @@ const th: Messages = {
 
   ratio: 'อัตราส่วน {value}',
   autoRefreshing: 'กำลังรีเฟรชอัตโนมัติ',
+  eventBannerTitle: '{label} เริ่มแล้ว!',
+  eventBannerBody: 'ตอนนี้ Bloodpoint ทุกแต้มถูกเพิ่มเป็น {mult} — เพิ่มจากโบนัสคิวที่มีอยู่',
+  eventEndsAt: 'สิ้นสุด {time}',
+  breakdownTitle: 'โบนัส Bloodpoint',
+  breakdownBase: 'พื้นฐาน',
+  breakdownQueueSurvivor: 'โบนัสคิว Survivor',
+  breakdownQueueKiller: 'โบนัสคิว Killer',
+  breakdownTotal: 'รวม',
+  breakdownTotalChip: 'รวม {mult}',
 
   emptyTitle: 'ไม่พบภูมิภาคที่ตรงกัน',
   emptyBody: 'ลองค้นหาด้วยคำอื่น หรือล้างตัวกรองเพื่อดูทุกภูมิภาค',

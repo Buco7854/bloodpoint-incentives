@@ -44,6 +44,16 @@ const tr: Messages = {
   ratio: 'oran {value}',
   autoRefreshing: 'otomatik yenileniyor',
 
+  eventBannerTitle: '{label} başladı!',
+  eventBannerBody: 'Şu anda her Kan Puanı {mult} katına çıkarıldı — üstelik her türlü kuyruk bonusuna ek olarak.',
+  eventEndsAt: '{time} sona eriyor',
+  breakdownTitle: 'Kan Puanı bonusları',
+  breakdownBase: 'Temel',
+  breakdownQueueSurvivor: 'Hayatta Kalan Kuyruk Bonusu',
+  breakdownQueueKiller: 'Katil Kuyruk Bonusu',
+  breakdownTotal: 'Toplam',
+  breakdownTotalChip: 'Toplam {mult}',
+
   emptyTitle: 'Eşleşen bölge yok',
   emptyBody: 'Farklı bir arama deneyin ya da tüm bölgeleri görmek için filtreleri temizleyin.',
   clearFilters: 'Filtreleri temizle',

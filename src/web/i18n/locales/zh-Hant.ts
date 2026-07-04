@@ -44,6 +44,16 @@ const zhHant: Messages = {
   ratio: '比率 {value}',
   autoRefreshing: '自動重新整理中',
 
+  eventBannerTitle: '{label} 開跑了！',
+  eventBannerBody: '現在所有血點都提升至 {mult}——還可與配對獎勵疊加。',
+  eventEndsAt: '結束於 {time}',
+  breakdownTitle: '血點獎勵明細',
+  breakdownBase: '基礎',
+  breakdownQueueSurvivor: '倖存者配對獎勵',
+  breakdownQueueKiller: '殺手配對獎勵',
+  breakdownTotal: '總計',
+  breakdownTotalChip: '總計 {mult}',
+
   emptyTitle: '沒有符合的地區',
   emptyBody: '請換個搜尋詞，或清除篩選條件以查看所有地區。',
   clearFilters: '清除篩選',

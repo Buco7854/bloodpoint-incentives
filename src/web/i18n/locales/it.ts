@@ -44,6 +44,16 @@ const it: Messages = {
   ratio: 'rapporto {value}',
   autoRefreshing: 'aggiornamento automatico',
 
+  eventBannerTitle: '{label} è in corso!',
+  eventBannerBody: 'In questo momento ogni Punto Sangue è potenziato a {mult}, oltre a qualsiasi bonus di coda.',
+  eventEndsAt: 'Termina {time}',
+  breakdownTitle: 'Bonus Punti Sangue',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: 'Bonus coda Sopravvissuto',
+  breakdownQueueKiller: 'Bonus coda Killer',
+  breakdownTotal: 'Totale',
+  breakdownTotalChip: 'Totale {mult}',
+
   emptyTitle: 'Nessuna regione corrisponde',
   emptyBody: 'Prova con un’altra ricerca o azzera i filtri per vedere tutte le regioni.',
   clearFilters: 'Azzera filtri',

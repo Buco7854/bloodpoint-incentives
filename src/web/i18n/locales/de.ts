@@ -43,6 +43,15 @@ const de: Messages = {
 
   ratio: 'Verhältnis {value}',
   autoRefreshing: 'wird automatisch aktualisiert',
+  eventBannerTitle: '{label} läuft!',
+  eventBannerBody: 'Jeder Blutpunkt wird gerade auf {mult} erhöht – zusätzlich zu jedem Warteschlangen-Bonus.',
+  eventEndsAt: 'Endet {time}',
+  breakdownTitle: 'Blutpunkte-Boni',
+  breakdownBase: 'Basis',
+  breakdownQueueSurvivor: 'Warteschlangen-Bonus für Überlebende',
+  breakdownQueueKiller: 'Warteschlangen-Bonus für Killer',
+  breakdownTotal: 'Gesamt',
+  breakdownTotalChip: 'Gesamt {mult}',
 
   emptyTitle: 'Keine passende Region',
   emptyBody: 'Versuche eine andere Suche oder setze die Filter zurück, um alle Regionen zu sehen.',

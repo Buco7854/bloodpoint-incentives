@@ -121,6 +121,14 @@ func (s *Server) registerAgentRoutes() {
 			return nil, huma.Error429TooManyRequests("reporting events too frequently")
 		}
 		events := report.ValidateEvents(in.Body.Events)
+		// BHVR's schedule always carries past + upcoming entries, so an empty result
+		// almost always means a decrypt/parse hiccup on the agent — not a real "no
+		// events" state. Ignore it rather than wiping a live event from a transient
+		// glitch. (A genuinely empty schedule has no *active* event anyway, since
+		// activeEvent is computed by time, so keeping the last one is harmless.)
+		if len(events) == 0 {
+			return &struct{}{}, nil
+		}
 		s.deps.Store.SetEvents(events)
 		s.persistEvents(events)
 		return &struct{}{}, nil

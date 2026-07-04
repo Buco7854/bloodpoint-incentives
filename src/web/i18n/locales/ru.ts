@@ -43,6 +43,15 @@ const ru: Messages = {
 
   ratio: 'соотношение {value}',
   autoRefreshing: 'автообновление',
+  eventBannerTitle: '{label} уже идёт!',
+  eventBannerBody: 'Все Очки крови сейчас увеличены до {mult} — вдобавок к любому бонусу за очередь.',
+  eventEndsAt: 'Завершается {time}',
+  breakdownTitle: 'Бонусы к Очкам крови',
+  breakdownBase: 'Базовые',
+  breakdownQueueSurvivor: 'Бонус очереди за Выжившего',
+  breakdownQueueKiller: 'Бонус очереди за Убийцу',
+  breakdownTotal: 'Итого',
+  breakdownTotalChip: 'Итого {mult}',
 
   emptyTitle: 'Подходящих регионов нет',
   emptyBody: 'Измените запрос или сбросьте фильтры, чтобы увидеть все регионы.',

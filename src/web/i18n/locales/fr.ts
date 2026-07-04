@@ -47,6 +47,16 @@ const fr: Messages = {
   ratio: 'ratio {value}',
   autoRefreshing: 'actualisation auto',
 
+  eventBannerTitle: '{label} est en cours !',
+  eventBannerBody: "Tous les points de sang sont multipliés à {mult} en ce moment — en plus de tout bonus de file d'attente.",
+  eventEndsAt: 'Se termine {time}',
+  breakdownTitle: 'Bonus de points de sang',
+  breakdownBase: 'Base',
+  breakdownQueueSurvivor: "Bonus de file d'attente survivant",
+  breakdownQueueKiller: "Bonus de file d'attente tueur",
+  breakdownTotal: 'Total',
+  breakdownTotalChip: 'Total {mult}',
+
   emptyTitle: 'Aucune région ne correspond',
   emptyBody: 'Essayez une autre recherche ou effacez les filtres pour afficher toutes les régions.',
   clearFilters: 'Effacer les filtres',
