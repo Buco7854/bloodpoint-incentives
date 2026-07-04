@@ -130,9 +130,9 @@ const th: Messages = {
 
   viewHistory: 'ดูประวัติ',
   regionDetails: 'รายละเอียด',
-  historyTitle: 'ประวัติโบนัส',
+  historyTitle: 'ประวัติโบนัสคิว',
   queueBonusHeading: 'โบนัสคิว',
-  historySubtitle: 'โบนัส Survivor และ Killer ของภูมิภาคนี้ตลอดช่วงเวลาที่ผ่านมา',
+  historySubtitle: 'โบนัสคิว Survivor และ Killer ของภูมิภาคนี้ตลอดช่วงเวลาที่ผ่านมา',
   historyBack: 'กลับไปยังภาพรวม',
   historySurvivorLine: 'Survivor',
   historyKillerLine: 'Killer',
@@ -153,7 +153,7 @@ const th: Messages = {
   activityChangesTitle: 'การเปลี่ยนแปลงล่าสุด',
   activityEmpty: 'ยังไม่มีข้อมูล',
 
-  forecastTitle: 'โบนัสที่คาดการณ์ (24 ชม. ข้างหน้า)',
+  forecastTitle: 'โบนัสคิวที่คาดการณ์ (24 ชม. ข้างหน้า)',
   forecastBandNote: 'แถบแรเงา = ช่วงที่เป็นไปได้',
   forecastConfHigh: 'พยากรณ์ค่อนข้างแม่นยำ',
   forecastConfMedium: 'พยากรณ์กำลังเริ่มชัดเจนขึ้น',
