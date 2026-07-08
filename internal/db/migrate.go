@@ -102,6 +102,13 @@ var migrations = []string{
 	ALTER TABLE users ADD COLUMN totp_last_step INTEGER NOT NULL DEFAULT 0;
 	CREATE INDEX IF NOT EXISTS readings_measured_at ON readings (measured_at);
 	`,
+	// 4: persist WebAuthn credential flags (UP/UV/backup-eligible/backup-state) so
+	// login validation can enforce the spec's flag-consistency check. NULL marks a
+	// credential registered before flags were recorded; its flags are adopted from
+	// the first subsequent assertion rather than enforced.
+	`
+	ALTER TABLE webauthn_credentials ADD COLUMN flags INTEGER;
+	`,
 }
 
 // migrate applies any pending migrations, tracked by PRAGMA user_version.

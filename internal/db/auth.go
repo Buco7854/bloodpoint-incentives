@@ -51,6 +51,9 @@ type CredentialRow struct {
 	Label        *string
 	CreatedAt    int64
 	LastUsedAt   *int64
+	// Flags is the raw WebAuthn credential-flags byte (UP/UV/backup-eligible/
+	// backup-state), or nil for a passkey registered before flags were recorded.
+	Flags *int64
 }
 
 // SessionRow is a login/admin session.
@@ -269,18 +272,23 @@ func (r *AuthRepo) inTx(fn func(*sql.Tx) error) error {
 
 // --- credentials ---
 
-const credCols = `id, user_id, credential_id, public_key, counter, transports, label, created_at, last_used_at`
+const credCols = `id, user_id, credential_id, public_key, counter, transports, label, created_at, last_used_at, flags`
 
 func scanCred(s interface{ Scan(...any) error }) (CredentialRow, error) {
 	var (
 		c          CredentialRow
 		transports sql.NullString
+		flags      sql.NullInt64
 	)
-	if err := s.Scan(&c.ID, &c.UserID, &c.CredentialID, &c.PublicKey, &c.Counter, &transports, &c.Label, &c.CreatedAt, &c.LastUsedAt); err != nil {
+	if err := s.Scan(&c.ID, &c.UserID, &c.CredentialID, &c.PublicKey, &c.Counter, &transports, &c.Label, &c.CreatedAt, &c.LastUsedAt, &flags); err != nil {
 		return CredentialRow{}, err
 	}
 	if transports.Valid && transports.String != "" {
 		_ = json.Unmarshal([]byte(transports.String), &c.Transports)
+	}
+	if flags.Valid {
+		v := flags.Int64
+		c.Flags = &v
 	}
 	return c, nil
 }
@@ -288,9 +296,9 @@ func scanCred(s interface{ Scan(...any) error }) (CredentialRow, error) {
 func (r *AuthRepo) AddCredential(c CredentialRow) error {
 	tj, _ := json.Marshal(c.Transports)
 	_, err := r.db.Exec(
-		`INSERT INTO webauthn_credentials (user_id, credential_id, public_key, counter, transports, label, created_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		c.UserID, c.CredentialID, c.PublicKey, c.Counter, string(tj), c.Label, r.now())
+		`INSERT INTO webauthn_credentials (user_id, credential_id, public_key, counter, transports, label, created_at, flags)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		c.UserID, c.CredentialID, c.PublicKey, c.Counter, string(tj), c.Label, r.now(), c.Flags)
 	return err
 }
 
@@ -322,8 +330,10 @@ func (r *AuthRepo) GetCredential(credentialID string) (CredentialRow, bool, erro
 	return c, true, nil
 }
 
-func (r *AuthRepo) UpdateCredentialCounter(credentialID string, counter int64) error {
-	_, err := r.db.Exec(`UPDATE webauthn_credentials SET counter = ?, last_used_at = ? WHERE credential_id = ?`, counter, r.now(), credentialID)
+// UpdateCredentialCounter records the signature counter, refreshed flags byte, and
+// last-used time after a successful assertion. flags may be nil to leave it unset.
+func (r *AuthRepo) UpdateCredentialCounter(credentialID string, counter int64, flags *int64) error {
+	_, err := r.db.Exec(`UPDATE webauthn_credentials SET counter = ?, flags = ?, last_used_at = ? WHERE credential_id = ?`, counter, flags, r.now(), credentialID)
 	return err
 }
 

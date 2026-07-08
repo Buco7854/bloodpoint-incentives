@@ -52,7 +52,12 @@ func (s *Server) waUser(u db.UserRow) auth.WAUser {
 	creds, _ := s.deps.AuthRepo.CredentialsForUser(u.ID)
 	stored := make([]auth.StoredCred, 0, len(creds))
 	for _, c := range creds {
-		stored = append(stored, auth.StoredCred{CredentialID: c.CredentialID, PublicKey: c.PublicKey, Counter: uint32(c.Counter), Transports: c.Transports})
+		sc := auth.StoredCred{CredentialID: c.CredentialID, PublicKey: c.PublicKey, Counter: uint32(c.Counter), Transports: c.Transports}
+		if c.Flags != nil {
+			f := uint8(*c.Flags)
+			sc.Flags = &f
+		}
+		stored = append(stored, sc)
 	}
 	name := u.Username
 	if u.Name != nil && *u.Name != "" {

@@ -17,6 +17,11 @@ type StoredCred struct {
 	PublicKey    string // base64url of COSE public key
 	Counter      uint32
 	Transports   []string
+	// Flags is the raw WebAuthn credential-flags byte (UP/UV/backup-eligible/
+	// backup-state) recorded for this credential, or nil if it was stored before
+	// flags were persisted. The backup-eligible (BE) flag is immutable per spec and
+	// is enforced against every assertion, so it must survive a round-trip.
+	Flags *uint8
 }
 
 // WAUser is the minimal user view the wrapper needs.
@@ -85,14 +90,18 @@ func toCredential(c StoredCred) (webauthn.Credential, error) {
 	for _, t := range c.Transports {
 		transports = append(transports, protocol.AuthenticatorTransport(t))
 	}
-	return webauthn.Credential{
+	cred := webauthn.Credential{
 		ID:        id,
 		PublicKey: pk,
 		Transport: transports,
 		Authenticator: webauthn.Authenticator{
 			SignCount: c.Counter,
 		},
-	}, nil
+	}
+	if c.Flags != nil {
+		cred.Flags = webauthn.CredentialFlagsFromMsgpByte(*c.Flags)
+	}
+	return cred, nil
 }
 
 func fromCredential(c *webauthn.Credential) StoredCred {
@@ -100,11 +109,13 @@ func fromCredential(c *webauthn.Credential) StoredCred {
 	for _, t := range c.Transport {
 		transports = append(transports, string(t))
 	}
+	flags := c.Flags.MsgpByte()
 	return StoredCred{
 		CredentialID: base64.RawURLEncoding.EncodeToString(c.ID),
 		PublicKey:    base64.RawURLEncoding.EncodeToString(c.PublicKey),
 		Counter:      c.Authenticator.SignCount,
 		Transports:   transports,
+		Flags:        &flags,
 	}
 }
 
@@ -177,19 +188,34 @@ func (w *WebAuthn) BeginLogin(u WAUser) (options any, session string, err error)
 }
 
 // FinishLogin verifies the assertion response JSON and returns the credential id
-// (base64url) that was used and its new signature counter.
-func (w *WebAuthn) FinishLogin(u WAUser, session string, body []byte) (credentialID string, newCounter uint32, err error) {
+// (base64url) that was used, its new signature counter, and its refreshed flags
+// byte (the backup-state flag can legitimately change and should be written back).
+func (w *WebAuthn) FinishLogin(u WAUser, session string, body []byte) (credentialID string, newCounter uint32, newFlags uint8, err error) {
 	var sess webauthn.SessionData
 	if err := json.Unmarshal([]byte(session), &sess); err != nil {
-		return "", 0, fmt.Errorf("unmarshal session: %w", err)
+		return "", 0, 0, fmt.Errorf("unmarshal session: %w", err)
 	}
 	parsed, err := protocol.ParseCredentialRequestResponseBody(bytes.NewReader(body))
 	if err != nil {
-		return "", 0, fmt.Errorf("parse assertion response: %w", err)
+		return "", 0, 0, fmt.Errorf("parse assertion response: %w", err)
+	}
+	// A credential registered before flags were persisted has no recorded BE/BS
+	// flags. The spec's flag-consistency check would then reject any backup-eligible
+	// (synced) passkey, since the stored flag reads false while the assertion says
+	// true. With nothing recorded to enforce against, adopt the flags this assertion
+	// presents for the matching credential before validating; the value is then
+	// written back so subsequent logins are enforced normally.
+	assertedID := base64.RawURLEncoding.EncodeToString(parsed.RawID)
+	assertedFlags := uint8(parsed.Response.AuthenticatorData.Flags)
+	for i := range u.Creds {
+		if u.Creds[i].CredentialID == assertedID && u.Creds[i].Flags == nil {
+			f := assertedFlags
+			u.Creds[i].Flags = &f
+		}
 	}
 	cred, err := w.wa.ValidateLogin(&waUser{u: u}, sess, parsed)
 	if err != nil {
-		return "", 0, err
+		return "", 0, 0, err
 	}
-	return base64.RawURLEncoding.EncodeToString(cred.ID), cred.Authenticator.SignCount, nil
+	return base64.RawURLEncoding.EncodeToString(cred.ID), cred.Authenticator.SignCount, cred.Flags.MsgpByte(), nil
 }

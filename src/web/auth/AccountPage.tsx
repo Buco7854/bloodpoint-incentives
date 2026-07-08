@@ -214,7 +214,12 @@ export function AccountPage({ onHome }: { onHome: () => void }) {
             <p className="w-full break-all text-center text-xs text-bone-500">{totp.secret}</p>
             <Field
               label={t('accountTotpEnterCode')}
+              name="otp"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              autoComplete="one-time-code"
               value={totpCode}
               onChange={(e) => setTotpCode(e.target.value)}
               placeholder={t('accountTotpCodePlaceholder')}
