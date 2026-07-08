@@ -53,9 +53,14 @@ func (s *Server) registerPasskeyRoutes() {
 				s.deps.Log.Warn("passkey registration failed", "err", err)
 				return nil, huma.Error400BadRequest("passkey registration failed")
 			}
+			var flags *int64
+			if cred.Flags != nil {
+				v := int64(*cred.Flags)
+				flags = &v
+			}
 			if err := repo.AddCredential(db.CredentialRow{
 				UserID: p.user.ID, CredentialID: cred.CredentialID, PublicKey: cred.PublicKey,
-				Counter: int64(cred.Counter), Transports: cred.Transports, Label: in.Body.Label,
+				Counter: int64(cred.Counter), Transports: cred.Transports, Label: in.Body.Label, Flags: flags,
 			}); err != nil {
 				return nil, err
 			}
@@ -133,12 +138,13 @@ func (s *Server) registerPasskeyRoutes() {
 			if !ok {
 				return nil, huma.Error400BadRequest("no pending authentication; start again")
 			}
-			credID, newCounter, err := wa.FinishLogin(s.waUser(p.user), blob, in.RawBody)
+			credID, newCounter, newFlags, err := wa.FinishLogin(s.waUser(p.user), blob, in.RawBody)
 			if err != nil {
 				s.deps.Log.Warn("passkey authentication failed", "err", err)
 				return nil, huma.Error401Unauthorized("passkey authentication failed")
 			}
-			_ = repo.UpdateCredentialCounter(credID, int64(newCounter))
+			flags := int64(newFlags)
+			_ = repo.UpdateCredentialCounter(credID, int64(newCounter), &flags)
 			_ = s.deps.Auth.UpgradeToMfa(p.session.ID)
 			_ = repo.TouchLogin(p.user.ID)
 			return &struct {

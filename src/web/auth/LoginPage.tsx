@@ -125,7 +125,11 @@ export function LoginPage() {
           <form className="flex flex-col gap-3" onSubmit={submitTotp}>
             <Field
               label={t('loginAuthenticatorCode')}
+              name="otp"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
               autoComplete="one-time-code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -159,7 +163,12 @@ export function LoginPage() {
             <p className="break-all text-center text-xs text-bone-500">{totpEnroll.secret}</p>
             <Field
               label={t('loginEnterCodeConfirm')}
+              name="otp"
+              type="text"
               inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              autoComplete="one-time-code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="123456"
