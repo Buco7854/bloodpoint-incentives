@@ -40,6 +40,8 @@ export interface AgentConfig {
   agentKey: string;
   /** Port for the agent's minimal health endpoint (0 disables it). */
   healthPort: number;
+  /** Report unhealthy after this many minutes without poller activity (0 disables). */
+  healthStaleMinutes: number;
 
   authProvider: DbdProvider;
   /** Body platform this agent reports as, derived from the auth provider. */
@@ -137,6 +139,7 @@ export function loadAgentConfig(env: NodeJS.ProcessEnv = process.env): AgentConf
     hubUrl: hubUrl.replace(/\/+$/, ''),
     agentKey,
     healthPort: clamp(readInt(env, 'AGENT_HEALTH_PORT', 3001), 0, 65535),
+    healthStaleMinutes: clamp(readInt(env, 'AGENT_HEALTH_STALE_MINUTES', 120), 0),
 
     authProvider,
     platform,

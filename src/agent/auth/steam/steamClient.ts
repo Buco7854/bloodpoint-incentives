@@ -12,6 +12,12 @@ const VERSION_FILE = 'DeadByDaylight/Content/Version/DeadByDaylightVersionNumber
 // is treated as transient and backed off.
 const FATAL_LOGIN_ERESULTS = new Set([5, 63, 85, 88]);
 
+const LOGIN_TIMEOUT_MS = 3 * 60_000;
+const BUSY_RETRY_MS = 30_000;
+/** After this long, an "in-flight" operation is considered wedged and the
+ * session cycle proceeds anyway instead of deferring forever. */
+const BUSY_FORCE_CYCLE_MS = 10 * 60_000;
+
 export interface SteamCredentials {
   username: string;
   password: string;
@@ -46,7 +52,7 @@ export class SteamClient {
   private refreshToken: string | null = null;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
   private onCycle: (() => void) | null = null;
-  private busy = false;
+  private busySince: number | null = null;
   private stopped = false;
   private readonly reconnectMinHours: number;
   private readonly reconnectMaxHours: number;
@@ -83,7 +89,15 @@ export class SteamClient {
   }
 
   connect(): Promise<void> {
-    if (!this.connectPromise) this.connectPromise = this.doConnect();
+    if (!this.connectPromise) {
+      // Clear the memoized promise on failure so the next caller retries fresh
+      // instead of awaiting a permanently rejected (or wedged) attempt.
+      const attempt = this.doConnect();
+      this.connectPromise = attempt;
+      attempt.catch(() => {
+        if (this.connectPromise === attempt) this.connectPromise = null;
+      });
+    }
     return this.connectPromise;
   }
 
@@ -93,59 +107,71 @@ export class SteamClient {
     const user = new SteamUser({ autoRelogin: true, machineName: 'dbd-bloodpoint-incentive' });
     this.user = user;
 
-    await new Promise<void>((resolve, reject) => {
-      let settled = false;
-      const settle = (err?: Error): void => {
-        if (settled) return;
-        settled = true;
-        if (err) reject(err);
-        else resolve();
-      };
+    try {
+      await new Promise<void>((resolve, reject) => {
+        let settled = false;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const settle = (err?: Error): void => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          if (err) reject(err);
+          else resolve();
+        };
+        timer = setTimeout(
+          () => settle(new Error(`Steam login timed out after ${LOGIN_TIMEOUT_MS / 1000}s`)),
+          LOGIN_TIMEOUT_MS,
+        );
 
-      user.on('refreshToken', (token: string) => {
-        this.refreshToken = token;
-      });
-      user.on('loggedOn', () => {
-        try {
-          user.setPersona(SteamUser.EPersonaState.Online);
-        } catch {
-          /* non-fatal */
-        }
-        this.log.info('logged into Steam');
-        this.scheduleSessionRefresh();
-        settle();
-      });
-      user.on('steamGuard', (_domain: string | null, callback: (code: string) => void) => {
-        const code = this.twoFactorCode();
-        if (!code) {
-          settle(new FatalAuthError('Steam Guard required but STEAM_SHARED_SECRET is not set'));
-          return;
-        }
-        callback(code);
-      });
-      user.on('error', (err: Error & { eresult?: number }) => {
-        this.log.error({ eresult: err.eresult, err }, 'Steam error');
-        if (err.eresult !== undefined && FATAL_LOGIN_ERESULTS.has(err.eresult)) {
-          settle(new FatalAuthError(`Steam login failed: ${err.message} (eresult ${err.eresult})`));
-        } else {
-          settle(err);
-        }
-      });
-      user.on('disconnected', (eresult: number, msg: string) => {
-        this.log.debug({ eresult, msg }, 'Steam disconnected');
-      });
-
-      // Prefer the refresh token (no Steam Guard) once we have captured one.
-      if (this.refreshToken) {
-        user.logOn({ refreshToken: this.refreshToken });
-      } else {
-        user.logOn({
-          accountName: this.creds.username,
-          password: this.creds.password,
-          twoFactorCode: this.twoFactorCode(),
+        user.on('refreshToken', (token: string) => {
+          this.refreshToken = token;
         });
-      }
-    });
+        user.on('loggedOn', () => {
+          try {
+            user.setPersona(SteamUser.EPersonaState.Online);
+          } catch {
+            /* non-fatal */
+          }
+          this.log.info('logged into Steam');
+          this.scheduleSessionRefresh();
+          settle();
+        });
+        user.on('steamGuard', (_domain: string | null, callback: (code: string) => void) => {
+          const code = this.twoFactorCode();
+          if (!code) {
+            settle(new FatalAuthError('Steam Guard required but STEAM_SHARED_SECRET is not set'));
+            return;
+          }
+          callback(code);
+        });
+        user.on('error', (err: Error & { eresult?: number }) => {
+          this.log.error({ eresult: err.eresult, err }, 'Steam error');
+          if (err.eresult !== undefined && FATAL_LOGIN_ERESULTS.has(err.eresult)) {
+            settle(new FatalAuthError(`Steam login failed: ${err.message} (eresult ${err.eresult})`));
+          } else {
+            settle(err);
+          }
+        });
+        user.on('disconnected', (eresult: number, msg: string) => {
+          this.log.warn({ eresult, msg }, 'Steam disconnected');
+        });
+
+        // Prefer the refresh token (no Steam Guard) once we have captured one.
+        if (this.refreshToken) {
+          user.logOn({ refreshToken: this.refreshToken });
+        } else {
+          user.logOn({
+            accountName: this.creds.username,
+            password: this.creds.password,
+            twoFactorCode: this.twoFactorCode(),
+          });
+        }
+      });
+    } catch (err) {
+      silenceAndLogOff(user);
+      if (this.user === user) this.user = null;
+      throw err;
+    }
   }
 
   /**
@@ -156,7 +182,7 @@ export class SteamClient {
    * returned blob to the web-api ticket size, all mirroring SteamKit2.
    */
   async getWebApiTicketHex(identity: string): Promise<string> {
-    this.busy = true;
+    this.busySince = Date.now();
     try {
       await this.connect();
       const user = this.user;
@@ -195,7 +221,7 @@ export class SteamClient {
 
       return ticket.full.toString('hex');
     } finally {
-      this.busy = false;
+      this.busySince = null;
     }
   }
 
@@ -224,7 +250,7 @@ export class SteamClient {
 
   /** Reads the latest public-branch client version string from the content depot. */
   async readVersionString(): Promise<string> {
-    this.busy = true;
+    this.busySince = Date.now();
     try {
       await this.connect();
       const { apps } = await this.user.getProductInfo([DBD_APP_ID], [], true);
@@ -271,7 +297,7 @@ export class SteamClient {
       }
       throw err;
     } finally {
-      this.busy = false;
+      this.busySince = null;
     }
   }
 
@@ -286,10 +312,17 @@ export class SteamClient {
 
   private async refreshSession(): Promise<void> {
     if (this.stopped) return;
-    if (this.busy) {
-      // Don't interrupt an in-flight operation; try again shortly.
-      this.refreshTimer = setTimeout(() => void this.refreshSession(), 30_000);
-      return;
+    if (this.busySince != null) {
+      if (Date.now() - this.busySince < BUSY_FORCE_CYCLE_MS) {
+        // Don't interrupt an in-flight operation; try again shortly.
+        this.refreshTimer = setTimeout(() => void this.refreshSession(), BUSY_RETRY_MS);
+        return;
+      }
+      this.log.warn(
+        { busyMinutes: Math.round((Date.now() - this.busySince) / 60_000) },
+        'in-flight Steam operation looks wedged; cycling the session anyway',
+      );
+      this.busySince = null;
     }
     this.log.info('cycling Steam session');
     this.teardown();
@@ -300,11 +333,7 @@ export class SteamClient {
   }
 
   private teardown(): void {
-    try {
-      this.user?.logOff();
-    } catch {
-      /* ignore */
-    }
+    if (this.user) silenceAndLogOff(this.user);
     this.user = null;
     this.connectPromise = null;
   }
@@ -316,5 +345,17 @@ export class SteamClient {
       this.refreshTimer = null;
     }
     this.teardown();
+  }
+}
+
+/** Detach a discarded steam-user instance: drop our handlers (keeping a no-op
+ * 'error' listener so a late emit cannot crash the process) and log off. */
+function silenceAndLogOff(user: any): void {
+  try {
+    user.removeAllListeners();
+    user.on('error', () => {});
+    user.logOff();
+  } catch {
+    /* ignore */
   }
 }

@@ -89,6 +89,7 @@ env vars are strictly required at boot.
 | `AGENT_KEY` | – (required) | The agent's token. The hub maps it to a region+platform. |
 | `AUTH_PROVIDER` | `steam` | Provider the agent authenticates with (decides its platform). Only `steam` today. |
 | `AGENT_HEALTH_PORT` | `3001` | Port for the minimal health endpoint (`0` disables it). |
+| `AGENT_HEALTH_STALE_MINUTES` | `120` | `/healthz` reports unhealthy after this long without poller activity, so a hung agent can be restarted (`0` disables the check). |
 | `STEAM_USERNAME` | – (required) | Steam account for headless login + depot discovery. Must own Dead by Daylight. |
 | `STEAM_PASSWORD` | – (required) | Steam account password. |
 | `STEAM_SHARED_SECRET` | – | Steam Guard shared secret (base64) for unattended 2FA. Strongly recommended for always-on agents. |

@@ -193,7 +193,14 @@ async function main(): Promise<void> {
     );
   }
 
-  if (runtime.healthPort > 0) healthServerRef = startHealthServer(runtime.healthPort, sink, log.child({ component: 'health' }));
+  if (runtime.healthPort > 0) {
+    healthServerRef = startHealthServer(
+      runtime.healthPort,
+      sink,
+      log.child({ component: 'health' }),
+      runtime.healthStaleMinutes * 60_000,
+    );
+  }
   if (canPoll) poller.start();
   eventPollerRef?.start();
 

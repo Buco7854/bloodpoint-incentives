@@ -25,6 +25,7 @@ export class HubReportingSink implements PollSink {
   private version: string | null = null;
   private category: string | null = null;
   private lastReportedAt: string | null = null;
+  private lastActivityAt = Date.now();
 
   constructor(
     private readonly hub: HubClient,
@@ -105,6 +106,7 @@ export class HubReportingSink implements PollSink {
   setStatus(status: AgentStatus, reason: string | null = null): void {
     this.status = status;
     this.statusReason = reason;
+    this.lastActivityAt = Date.now();
   }
 
   setVersionInfo(version: string | null, category: string | null): void {
@@ -113,7 +115,7 @@ export class HubReportingSink implements PollSink {
   }
 
   markPassStarted(): void {
-    /* single-region agent: nothing to track between pass boundaries */
+    this.lastActivityAt = Date.now();
   }
 
   markPassCompleted(): void {
@@ -121,7 +123,17 @@ export class HubReportingSink implements PollSink {
   }
 
   /** Snapshot for the health endpoint. */
-  health(): { status: AgentStatus; reason: string | null; lastReportedAt: string | null } {
-    return { status: this.status, reason: this.statusReason, lastReportedAt: this.lastReportedAt };
+  health(): {
+    status: AgentStatus;
+    reason: string | null;
+    lastReportedAt: string | null;
+    lastActivityAt: number;
+  } {
+    return {
+      status: this.status,
+      reason: this.statusReason,
+      lastReportedAt: this.lastReportedAt,
+      lastActivityAt: this.lastActivityAt,
+    };
   }
 }
