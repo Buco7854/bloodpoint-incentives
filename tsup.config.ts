@@ -11,7 +11,7 @@ export default defineConfig({
   outDir: 'dist',
   format: ['cjs'],
   platform: 'node',
-  target: 'node20',
+  target: 'node24',
   // Do NOT clean: vite writes dist/public first and we must not wipe it.
   clean: false,
   sourcemap: true,
