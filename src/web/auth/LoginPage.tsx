@@ -125,6 +125,7 @@ export function LoginPage() {
           <form className="flex flex-col gap-3" onSubmit={submitTotp}>
             <Field
               label={t('loginAuthenticatorCode')}
+              id="login-totp-code"
               name="otp"
               type="text"
               inputMode="numeric"
@@ -163,6 +164,7 @@ export function LoginPage() {
             <p className="break-all text-center text-xs text-bone-500">{totpEnroll.secret}</p>
             <Field
               label={t('loginEnterCodeConfirm')}
+              id="login-totp-enroll-code"
               name="otp"
               type="text"
               inputMode="numeric"

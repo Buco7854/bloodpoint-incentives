@@ -214,6 +214,7 @@ export function AccountPage({ onHome }: { onHome: () => void }) {
             <p className="w-full break-all text-center text-xs text-bone-500">{totp.secret}</p>
             <Field
               label={t('accountTotpEnterCode')}
+              id="account-totp-code"
               name="otp"
               type="text"
               inputMode="numeric"
