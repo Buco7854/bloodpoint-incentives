@@ -51,7 +51,7 @@ The system is made of two roles that you run yourself:
         redundant, same coverage       └─ REST API + OpenAPI docs
 ```
 
-Under the hood the hub is a Go service (Go 1.25, the [Huma](https://huma.rocks/)
+Under the hood the hub is a Go service (Go 1.27+, the [Huma](https://huma.rocks/)
 framework over chi, pure-Go SQLite via `modernc`), and agents are Node processes
 that log into Steam to discover the live client build and read incentives.
 

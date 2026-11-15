@@ -28,6 +28,30 @@ Compose pulls these by default. You can override them with `HUB_IMAGE` /
 static Go binary that serves the SPA. The agent image is the Node runtime with
 the Steam libraries.
 
+### Security updates
+
+CI and image publishing run every Monday at 04:23 UTC on `main`, as well as on pushes.
+Scheduled and manual image builds pull fresh base images and bypass the build
+cache. Both runtime images upgrade installed Debian packages before installing
+their runtime tools, so fixes can ship without an application code change.
+Builds track the latest stable Go release and the latest Node LTS release using
+the `golang:1-trixie` and `node:lts-trixie-slim` base images. CI and docs builds
+select those same release channels.
+Dependabot checks npm, Go, Docker, and GitHub Actions dependencies weekly and opens
+update PRs. Locked npm and Go dependencies are updated when those PRs are merged.
+
+To deploy refreshed images on an existing installation:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+GitHub can delay scheduled runs and disables schedules in public repositories
+after 60 days without repository activity. Check the Actions tab and re-enable
+the schedules if necessary. The **Publish Docker image** workflow also supports
+manual runs for an immediate clean rebuild.
+
 ## Walkthrough
 
 A single `.env` file drives everything. Copy the example and edit it:

@@ -3,6 +3,9 @@ name: Publish Docker image
 on:
   push:
     branches: [main]
+  schedule:
+    # Refresh base images and OS packages every Monday, even without source changes (UTC).
+    - cron: '23 4 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -35,6 +38,9 @@ jobs:
           context: .
           target: hub
           push: true
+          pull: true
+          # Rerun package installation on scheduled and manual security rebuilds.
+          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ env.IMAGE }}/hub:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -45,6 +51,8 @@ jobs:
           context: .
           target: agent
           push: true
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
           tags: ${{ env.IMAGE }}/agent:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

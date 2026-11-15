@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build the SPA + agent bundle (Node) ----
-FROM node:24-trixie-slim AS build-web
+FROM node:lts-trixie-slim AS build-web
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build:web && npm run build:agent
 
 # ---- Build the hub binary (Go, static / no cgo) ----
-FROM golang:1.26-trixie AS build-hub
+FROM golang:1-trixie AS build-hub
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
@@ -17,7 +17,7 @@ COPY . .
 RUN CGO_ENABLED=0 go build -trimpath -o /out/bloodpoint-hub ./cmd/hub
 
 # ---- Production deps: agent (includes steam-user / steam-totp) ----
-FROM node:24-trixie-slim AS deps-agent
+FROM node:lts-trixie-slim AS deps-agent
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
@@ -32,6 +32,7 @@ ENV PORT=3000 \
     APP_USER=app
 WORKDIR /app
 RUN apt-get update \
+  && apt-get upgrade -y --no-install-recommends \
   && apt-get install -y --no-install-recommends gosu ca-certificates curl tzdata \
   && rm -rf /var/lib/apt/lists/* \
   && useradd -r -m -d /home/app app
@@ -46,13 +47,14 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 CMD ["/app/bloodpoint-hub"]
 
 # ---- Agent image (single-region poller, Node) ----
-FROM node:24-trixie-slim AS agent
+FROM node:lts-trixie-slim AS agent
 ENV NODE_ENV=production \
     TZ=UTC \
     STATE_DIR=/app/data \
     APP_USER=node
 WORKDIR /app
 RUN apt-get update \
+  && apt-get upgrade -y --no-install-recommends \
   && apt-get install -y --no-install-recommends gosu \
   && rm -rf /var/lib/apt/lists/*
 COPY docker-entrypoint.sh ./

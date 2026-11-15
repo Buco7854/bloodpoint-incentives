@@ -1,6 +1,6 @@
 module github.com/buco7854/bloodpoint-incentives
 
-go 1.26.0
+go 1.27.4
 
 require (
 	github.com/danielgtaylor/huma/v2 v2.39.1
