@@ -68,5 +68,8 @@
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vitepress": "^1.6.4"
+  },
+  "overrides": {
+    "@doctormckay/steam-crypto": "https://codeload.github.com/DoctorMcKay/node-steam-crypto/tar.gz/0477c0ba9fade27b7a3d49b57ee7e7529a475f8b"
   }
 }

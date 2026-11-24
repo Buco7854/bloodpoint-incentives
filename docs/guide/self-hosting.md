@@ -40,6 +40,14 @@ select those same release channels.
 Dependabot checks npm, Go, Docker, and GitHub Actions dependencies weekly and opens
 update PRs. Locked npm and Go dependencies are updated when those PRs are merged.
 
+The agent pins `@doctormckay/steam-crypto` so Node 26 reads the final decrypted
+bytes of Steam depot chunks.
+
+- [ ] **TODO** Check whether [upstream PR #2](https://github.com/DoctorMcKay/node-steam-crypto/pull/2)
+  has merged and its fix is available on npm. Once it is, remove the override,
+  update the lockfile, and confirm that `npm ls @doctormckay/steam-crypto` resolves
+  the fixed release and `npm test` passes on the latest Node LTS.
+
 To deploy refreshed images on an existing installation:
 
 ```bash
