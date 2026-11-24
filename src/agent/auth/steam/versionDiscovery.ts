@@ -3,8 +3,7 @@ import type { VersionDiscovery } from '../types.js';
 import type { SteamClient } from './steamClient.js';
 
 /**
- * Reads the latest client version from the Steam depot, with a short cache so the
- * version resolver and the login flow share a single depot read at startup.
+ * Reads the latest client version from the Steam depot and caches it briefly.
  */
 export class SteamVersionDiscovery implements VersionDiscovery {
   private cached: { value: string; at: number } | null = null;

@@ -24,6 +24,10 @@ export class VersionFormatError extends Error {
  */
 export const CLIENT_OS = '10.0.26100.1.768.64bit';
 
+export function isSteamShippingVersion(value: string): boolean {
+  return /^DBD_[A-Z0-9]+_[A-Z0-9]+_Steam_Shipping_(?:[A-Z0-9]+_)*[1-9]\d*$/i.test(value);
+}
+
 export function deriveCategory(versionString: string): string {
   const parts = versionString.split('_');
   const product = parts[1];

@@ -1,10 +1,10 @@
 import type { Logger } from '../../../common/logger.js';
 import { FatalAuthError } from '../errors.js';
+import { readDepotVersion, type DepotFile } from './depotVersion.js';
 import { buildWebApiTicket } from './webApiTicket.js';
 
 const DBD_APP_ID = 381210;
 const DBD_CONTENT_DEPOT = 381211; // "Dead by Daylight Content" (Windows)
-const VERSION_FILE = 'DeadByDaylight/Content/Version/DeadByDaylightVersionNumber.txt';
 
 // EResults that mean the credentials/2FA are wrong (unrecoverable by retrying):
 // InvalidPassword, AccountLogonDenied, AccountLoginDeniedNeedTwoFactor,
@@ -270,24 +270,17 @@ export class SteamClient {
       // The promisified API may resolve to the manifest directly or wrap it as
       // { manifest }, depending on the steam-user version.
       const manifest = (manifestResult?.files ? manifestResult : manifestResult?.manifest) as
-        | { files?: Array<{ filename?: string }> }
+        | { files?: DepotFile[] }
         | undefined;
       const files = manifest?.files;
       if (!files) throw new Error('depot manifest contained no file list');
 
-      // Match by basename so path prefixes and separators do not matter.
-      const wantedBase = VERSION_FILE.split('/').pop()?.toLowerCase();
-      const entry = files.find(
-        (f) =>
-          typeof f.filename === 'string' &&
-          f.filename.split(/[\\/]/).pop()?.toLowerCase() === wantedBase,
-      );
-      if (!entry) throw new Error('version file not found in depot manifest');
-
-      const downloadResult = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
-      const fileBuffer = (downloadResult?.file ?? downloadResult) as Buffer | undefined;
-      if (!fileBuffer) throw new Error('depot file download returned no data');
-      return Buffer.from(fileBuffer).toString('utf8').trim();
+      return await readDepotVersion(files, async (entry) => {
+        const downloadResult = await this.user.downloadFile(DBD_APP_ID, DBD_CONTENT_DEPOT, entry);
+        const fileBuffer = (downloadResult?.file ?? downloadResult) as Buffer | undefined;
+        if (!fileBuffer) throw new Error('depot file download returned no data');
+        return Buffer.from(fileBuffer).toString('utf8').trim();
+      }, manifestGid);
     } catch (err) {
       if ((err as { eresult?: number }).eresult === 15) {
         throw new FatalAuthError(

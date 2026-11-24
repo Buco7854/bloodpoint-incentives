@@ -94,14 +94,14 @@ env vars are strictly required at boot.
 | `STEAM_PASSWORD` | – (required) | Steam account password. |
 | `STEAM_SHARED_SECRET` | – | Steam Guard shared secret (base64) for unattended 2FA. Strongly recommended for always-on agents. |
 | `DBD_API_KEY` | – | Fallback (not recommended): a pre-obtained key for DBD auth, used only if the Steam login is rejected. The key expires and cannot self-refresh. |
+| `DBD_FALLBACK_VERSION` | – | Full Steam shipping build string from the installed client. Used at startup if discovery fails and the saved working build is older or missing. Discovery still runs on schedule. |
 | `VERSION_REFRESH_HOURS` | `6` | How often the agent re-resolves the latest build / client version. |
 | `AGENT_MIN_POLL_SECONDS` | `%refreshTime%` | Accepted-range floor: refuse if the hub asks to poll faster. Seconds or a `%refreshTime%` expression. `off`/`none` disables it. |
 | `AGENT_MAX_POLL_SECONDS` | `%refreshTime% * 1.33` | Accepted-range ceiling: refuse if the hub asks to poll slower. Seconds or a `%refreshTime%` expression. `off`/`none` disables it. |
 | `STATE_DIR` | `./data` | Directory for the last-working-version state file. |
 
 The poll cadence itself is set by the hub, not the agent. The agent only
-enforces its accepted range. The client version and OS headers are not
-configurable. The client version is discovered live and the OS header is fixed.
+enforces its accepted range. The agent discovers the client version live and uses a fixed OS header.
 
 ## Optional: YAML config
 

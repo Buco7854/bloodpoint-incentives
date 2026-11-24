@@ -55,3 +55,9 @@ test('malformed AGENT_MIN/MAX_POLL_SECONDS expressions are rejected', () => {
   assert.throws(() => loadAgentConfig(env({ AGENT_MIN_POLL_SECONDS: '%refreshTime% *' })), /AGENT_MIN_POLL_SECONDS/);
   assert.throws(() => loadAgentConfig(env({ AGENT_MAX_POLL_SECONDS: '1 +' })), /AGENT_MAX_POLL_SECONDS/);
 });
+
+test('the startup fallback requires a full Steam client build string', () => {
+  for (const value of ['10.3.0', '10.3.0_4009053live', '26718868']) {
+    assert.throws(() => loadAgentConfig(env({ DBD_FALLBACK_VERSION: value })), /DBD_FALLBACK_VERSION/);
+  }
+});

@@ -46,6 +46,7 @@ export function createAuth(config: AppConfig, store: StateStore, log: Logger): A
 
   const resolver = new VersionResolver({
     gameVersion: config.gameVersion,
+    fallbackVersion: config.fallbackVersion,
     clientOs: config.clientOs,
     discovery,
     store,
@@ -74,6 +75,7 @@ export function createAuth(config: AppConfig, store: StateStore, log: Logger): A
   }
   const provider = new SteamAuthProvider({
     steamClient,
+    resolver,
     discovery,
     anchorResolver,
     config,

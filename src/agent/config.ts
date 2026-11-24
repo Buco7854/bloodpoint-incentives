@@ -8,7 +8,7 @@ import {
 } from '../shared/platforms.js';
 import { DEFAULT_MAX_RATIO, resolveCadence } from '../common/cadence.js';
 import { clamp, ConfigError, readBool, readInt, readString } from '../common/env.js';
-import { CLIENT_OS } from './version/category.js';
+import { CLIENT_OS, isSteamShippingVersion } from './version/category.js';
 
 /** Unset falls back to the default; `off`/`none` disables the bound. */
 function resolvePollBound(env: NodeJS.ProcessEnv, name: string, fallback: string): string | null {
@@ -30,7 +30,7 @@ export { ConfigError };
  * from env: the hub assigns it from the agent's key. Its platform follows from
  * the auth provider (it reports as the platform it authenticates with). Nothing
  * about the client is pinned: the version and client headers are always the
- * latest discovered ones, so there are no version/OS knobs to set.
+ * resolved ones, with an optional startup fallback when discovery fails.
  */
 export interface AgentConfig {
   logLevel: string;
@@ -58,6 +58,7 @@ export interface AgentConfig {
 
   /** Always 'auto': the agent tracks the latest live build, never a pinned one. */
   gameVersion: 'auto';
+  fallbackVersion: string | null;
   versionRefreshHours: number;
   clientOs: string;
 
@@ -113,6 +114,11 @@ export function loadAgentConfig(env: NodeJS.ProcessEnv = process.env): AgentConf
     throw new ConfigError('AGENT_KEY is required (the hub identifies the agent by this key).');
   }
 
+  const fallbackVersion = readString(env, 'DBD_FALLBACK_VERSION');
+  if (fallbackVersion && !isSteamShippingVersion(fallbackVersion)) {
+    throw new ConfigError('DBD_FALLBACK_VERSION must be a full DBD Steam shipping build string.');
+  }
+
   const dbdApiKey = readString(env, 'DBD_API_KEY');
   const steamUsername = readString(env, 'STEAM_USERNAME');
   const steamPassword = readString(env, 'STEAM_PASSWORD');
@@ -148,6 +154,7 @@ export function loadAgentConfig(env: NodeJS.ProcessEnv = process.env): AgentConf
     hasSteamCredentials,
 
     gameVersion: 'auto',
+    fallbackVersion,
     versionRefreshHours: clamp(readInt(env, 'VERSION_REFRESH_HOURS', 6), 1),
     clientOs: CLIENT_OS,
 

@@ -73,3 +73,32 @@ test('cosmetic-patch guard reverts to last-working and waits for a newer build',
   await resolver.refreshFromDiscovery();
   assert.equal(resolver.getActive()?.version, v(300));
 });
+
+test('an unavailable depot can bootstrap from a supplied build and later adopt a live build', async () => {
+  let available = false;
+  const resolver = new VersionResolver({
+    gameVersion: 'auto', fallbackVersion: v(100), clientOs: 'os', store: newStore(), log,
+    discovery: {
+      async resolveLatestVersion() {
+        if (!available) throw new Error('missing version file');
+        return v(200);
+      },
+    },
+  });
+  await resolver.init();
+  assert.equal(resolver.getActive()?.version, v(100));
+  available = true;
+  await resolver.refreshFromDiscovery();
+  assert.equal(resolver.getActive()?.version, v(200));
+});
+
+test('a saved working version takes precedence over an older startup fallback', async () => {
+  const store = newStore();
+  await store.writeLastWorkingVersion(v(200));
+  const resolver = new VersionResolver({
+    gameVersion: 'auto', fallbackVersion: v(100), clientOs: 'os', store, log,
+    discovery: { async resolveLatestVersion() { throw new Error('missing version file'); } },
+  });
+  await resolver.init();
+  assert.equal(resolver.getActive()?.version, v(200));
+});

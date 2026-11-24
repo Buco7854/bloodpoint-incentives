@@ -1,7 +1,7 @@
 import type { AppConfig } from '../config.js';
 import type { Logger } from '../../common/logger.js';
 import type { AnchorResolver } from '../bhvr/anchor.js';
-import { buildUserAgent } from '../version/category.js';
+import type { VersionResolver } from '../version/resolver.js';
 import { AuthError, FatalAuthError } from './errors.js';
 import type { SteamClient } from './steam/steamClient.js';
 import type { SteamVersionDiscovery } from './steam/versionDiscovery.js';
@@ -10,6 +10,7 @@ import type { AuthProvider, VersionDiscovery } from './types.js';
 export interface SteamAuthProviderDeps {
   steamClient: SteamClient;
   discovery: SteamVersionDiscovery;
+  resolver: VersionResolver;
   anchorResolver: AnchorResolver;
   config: AppConfig;
   log: Logger;
@@ -55,9 +56,11 @@ export class SteamAuthProvider implements AuthProvider {
   }
 
   private async doLogin(): Promise<string> {
-    const { steamClient, discovery, config, log } = this.deps;
+    const { steamClient, resolver, config, log } = this.deps;
+    const version = resolver.getActive();
+    if (!version) throw new AuthError('Steam login requires a resolved client version');
+    const userAgent = version.userAgent;
     const ticketHex = await steamClient.getWebApiTicketHex('KRAKEN_DBD');
-    const userAgent = buildUserAgent(await discovery.resolveLatestVersion(), config.clientOs);
     const anchor = await this.deps.anchorResolver.getAnchor(userAgent);
     log.info({ pattern: anchor.pattern, contentVersionId: anchor.contentVersionId }, 'selected BHVR login anchor');
 

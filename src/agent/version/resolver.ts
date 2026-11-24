@@ -7,6 +7,7 @@ import { StateStore } from './store.js';
 export interface VersionResolverOptions {
   /** 'auto' to discover from the Steam depot, or a pinned full version string. */
   gameVersion: string;
+  fallbackVersion?: string | null;
   clientOs: string;
   discovery: VersionDiscovery | null;
   store: StateStore;
@@ -48,6 +49,14 @@ export class VersionResolver {
     }
 
     await this.refreshFromDiscovery();
+    if (!this.active && this.opts.fallbackVersion) {
+      const fallback = deriveVersionArtifacts(this.opts.fallbackVersion, this.opts.clientOs);
+      if (!this.lastWorking || fallback.buildId > this.lastWorking.buildId) {
+        this.candidate = fallback;
+        this.active = fallback;
+        this.opts.log.info({ version: fallback.version }, 'trying configured fallback version');
+      }
+    }
     if (!this.active) this.active = this.lastWorking;
     if (!this.active) {
       // Not fatal: the poller stays in an error state and keeps retrying
